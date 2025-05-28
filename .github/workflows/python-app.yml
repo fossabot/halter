@@ -28,7 +28,7 @@ jobs:
         run: pip install uv
 
       - name: create venv
-      - run: uv venv
+        run: uv venv
 
       - name: 📦 Install dependencies
         run: uv pip install -r requirements.txt
