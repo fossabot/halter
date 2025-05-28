@@ -1,0 +1,29 @@
+project:
+  full_name: "New Building Network"
+  english_name: "NewBuildingNetwork"
+  project_types: ["Internal", "Maintenance"]
+  stage: "Design"
+
+networks:
+  - name: "Net-Office"
+    project_type: "Internal"
+    class: "C"
+    ip: "192.168.1.0"
+    mask: "255.255.255.0"
+    vlan: 10
+  - name: "Net-Guest"
+    project_type: "External"
+    class: "C"
+    ip: "10.0.0.0"
+    mask: "255.255.0.0"
+    vlan: 20
+
+hardware:
+  - device_name: "Router1"
+    role: "Router"
+    brand: "Cisco"
+    model: "XYZ123"
+    ports: 4
+    port_config:
+      1: { ip: "192.168.1.1", network: "Net-Office" }
+      2: { ip: "10.0.0.1", network: "Net-Guest" }

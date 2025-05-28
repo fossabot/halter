@@ -1,0 +1,48 @@
+[project]
+name = "halter"
+version = "0.1.0"
+description = "Мультиплатформенное приложение для управления сетевыми проектами"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+authors = [{ name = "Flet Developer", email = "you@example.com" }]
+dependencies = ["flet==0.28.2"]
+
+[tool.flet]
+# Название организации в формате обратного домена (используется для bundle ID)
+org = "com.mycompany"
+
+# Название продукта (отображается в заголовках, иконках и about-окне)
+product = "halter"
+
+# Название компании (отображается в about-окне)
+company = "Flet"
+
+# Копирайт
+copyright = "Copyright (C) 2025 by Flet"
+
+[tool.flet.app]
+# Путь к исходному коду приложения
+path = "src"
+
+[tool.uv]
+# Зависимости для разработки и тестирования
+dev-dependencies = [
+  "flet[all]==0.28.2",
+  "pytest>=8.3.5",
+  "pytest-cov>=6.1.1",
+  "ruff>=0.11.9",
+]
+
+[tool.pytest.ini_options]
+# Устанавливаем корневой путь для pytest
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "double"            # или 'single'
+indent-style = "space"            # можно 'tab'
+skip-magic-trailing-comma = false
