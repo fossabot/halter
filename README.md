@@ -1,7 +1,7 @@
 # Halter
 
 ![Tests](https://github.com/herokrat/halter/actions/workflows/python-app.yml/badge.svg)
-![Coverage](https://img.shields.io/codecov/c/github/herokrat/halter?logo=codecov)
+[![codecov](https://codecov.io/gh/herokrat/halter/graph/badge.svg?token=SOY22473CK)](https://codecov.io/gh/herokrat/halter)
 ![License](https://img.shields.io/github/license/herokrat/halter)
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)

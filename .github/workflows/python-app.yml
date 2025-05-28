@@ -58,8 +58,7 @@ jobs:
           python-version: "3.13"
 
       - name: 📦 Install uv and flet
-        run: |
-          pip install uv
+        run: pip install uv
       
       - name: reate venv
         run: uv venv
