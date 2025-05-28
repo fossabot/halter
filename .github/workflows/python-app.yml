@@ -61,12 +61,15 @@ jobs:
         run: |
           pip install uv
           uv pip install flet
+      
+      - name: create venv
+        run: uv venv
 
       - name: 🏗️ Build for Windows
-        run: flet build windows -v
+        run: uv run flet build windows -v
 
       - name: 🏗️ Build for Linux
-        run: flet build linux -v
+        run: uv run flet build linux -v
 
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
