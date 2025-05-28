@@ -12,42 +12,35 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  unit-test:
+    name: Run unit tests
     runs-on: ubuntu-latest
-
     steps:
-      - name: 🧾 Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Cache pip
-        uses: actions/cache@v4
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v5
+          fetch-depth: 2
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v3
         with:
-          python-version: "3.13"
-          cache: "pip"
-
-      - name: 📦 Install uv
-        run: pip install uv
-
-      - name: create venv
-        run: uv venv
-
-      - name: 📦 Install dependencies
-        run: uv pip install -r requirements.txt
-
-      - name: ✅ Run tests with coverage
+          python-version: 3.13
+          cache: pip
+      - name: Install UV
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Install requirements
         run: |
-          uv pip install pytest pytest-cov
-          uv run pytest --cov=src --cov-report=xml
-
-      - name: 📤 Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+              uv venv &&
+              uv sync
+      - name: Test with pytest
+        run: |
+          uv run pytest --cov --junitxml=junit.xml
+      # Copy and paste the codecov/test-results-action here
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

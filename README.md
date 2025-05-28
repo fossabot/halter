@@ -34,34 +34,6 @@ uv run flet run --web
 
 ## Сборка приложения
 
-### Android
-
-```bash
-uv run flet build apk -v
-```
-
-Подробнее о сборке и подписывании `.apk` и `.aab`: [Android Packaging Guide](https://flet.dev/docs/publish/android/).
-
----
-
-### iOS
-
-```bash
-uv run flet build ipa -v
-```
-
-Подробнее о сборке и подписывании `.ipa`: [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
-
----
-
-### macOS
-
-```bash
-uv run flet build macos -v
-```
-
-Подробнее: [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
-
 ---
 
 ### Linux
