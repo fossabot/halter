@@ -1,8 +1,8 @@
 # Halter
 
-![Tests](https://github.com/<user>/<repo>/actions/workflows/tests.yml/badge.svg)
-![Coverage](https://img.shields.io/codecov/c/github/<user>/<repo>?logo=codecov)
-![License](https://img.shields.io/github/license/<user>/<repo>)
+![Tests](https://github.com/herokrat/halter/actions/workflows/tests.yml/badge.svg)
+![Coverage](https://img.shields.io/codecov/c/github/herokrat/halter?logo=codecov)
+![License](https://img.shields.io/github/license/herokrat/halter)
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)
 
