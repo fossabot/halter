@@ -28,7 +28,7 @@ jobs:
       - name: ✅ Run tests with coverage
         run: |
           uv pip install pytest pytest-cov
-          pytest --cov=src --cov-report=xml
+          uv run pytest --cov=src --cov-report=xml
 
       - name: 📤 Upload coverage to Codecov
         uses: codecov/codecov-action@v4
