@@ -1,6 +1,10 @@
----
-
 # Halter
+
+![Tests](https://github.com/<user>/<repo>/actions/workflows/tests.yml/badge.svg)
+![Coverage](https://img.shields.io/codecov/c/github/<user>/<repo>?logo=codecov)
+![License](https://img.shields.io/github/license/<user>/<repo>)
+![Python](https://img.shields.io/badge/python-3.13-blue)
+![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)
 
 ## Описание
 
@@ -33,7 +37,7 @@ uv run flet run --web
 ### Android
 
 ```bash
-flet build apk -v
+uv run flet build apk -v
 ```
 
 Подробнее о сборке и подписывании `.apk` и `.aab`: [Android Packaging Guide](https://flet.dev/docs/publish/android/).
@@ -43,7 +47,7 @@ flet build apk -v
 ### iOS
 
 ```bash
-flet build ipa -v
+uv run flet build ipa -v
 ```
 
 Подробнее о сборке и подписывании `.ipa`: [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
@@ -53,7 +57,7 @@ flet build ipa -v
 ### macOS
 
 ```bash
-flet build macos -v
+uv run flet build macos -v
 ```
 
 Подробнее: [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
@@ -63,7 +67,7 @@ flet build macos -v
 ### Linux
 
 ```bash
-flet build linux -v
+uv run flet build linux -v
 ```
 
 Подробнее: [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
@@ -73,7 +77,7 @@ flet build linux -v
 ### Windows
 
 ```bash
-flet build windows -v
+uv run flet build windows -v
 ```
 
 Подробнее: [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
@@ -97,13 +101,13 @@ flet build windows -v
 * Запустить все тесты можно командой:
 
 ```bash
-pytest
+uv run pytest
 ```
 
 * Для проверки покрытия кода используйте:
 
 ```bash
-pytest --cov=src --cov-report=term-missing
+uv run pytest --cov=src --cov-report=term-missing
 ```
 
 * Рекомендуется покрывать тестами все ключевые модули и функции.

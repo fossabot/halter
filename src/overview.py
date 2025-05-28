@@ -49,50 +49,7 @@ def build_overview_tab(page: ft.Page) -> ft.Column:
         options=[ft.dropdown.Option(s) for s in PROJECT_STAGES],
         on_blur=lambda e: validator.validate(ValidationType.NotSelected, e),
     )
-    # # Date pickers for start/end
-    # date_rows: list[ft.Row] = []
-    # for i in range(len(PROJECT_STAGES)):
-    #     date_rows.append(
-    #         ft.Row(
-    #             [
-    #                 ft.Text(f"Start of {PROJECT_STAGES[i]}:"),
-    #                 ft.ElevatedButton(
-    #                     "Pick start date",
-    #                     icon=ft.Icons.CALENDAR_MONTH,
-    #                     on_click=lambda e: page.open(
-    #                         ft.DatePicker(
-    #                             first_date=dt.datetime(
-    #                                 year=2020, month=1, day=1
-    #                             ),
-    #                             last_date=dt.datetime(
-    #                                 year=2030, month=12, day=1
-    #                             ),
-    #                             on_change=handle_change,
-    #                             on_dismiss=handle_dismissal,
-    #                         )
-    #                     ),
-    #                 ),
-    #                 ft.Text(f"End of {PROJECT_STAGES[i]}:"),
-    #                 ft.ElevatedButton(
-    #                     "Pick end date",
-    #                     icon=ft.Icons.CALENDAR_MONTH,
-    #                     on_click=lambda e: page.open(
-    #                         ft.DatePicker(
-    #                             first_date=dt.datetime(
-    #                                 year=2020, month=1, day=1
-    #                             ),
-    #                             last_date=dt.datetime(
-    #                                 year=2035, month=12, day=1
-    #                             ),
-    #                             on_change=handle_change,
-    #                             on_dismiss=handle_dismissal,
-    #                         )
-    #                     ),
-    #                 ),
-    #             ],
-    #             ft.MainAxisAlignment.START,
-    #         )
-    #    )
+
     return ft.Column(
         [
             full_name,
