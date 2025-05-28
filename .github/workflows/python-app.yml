@@ -60,10 +60,12 @@ jobs:
       - name: 📦 Install uv and flet
         run: |
           pip install uv
-          uv pip install flet
       
-      - name: create venv
+      - name: reate venv
         run: uv venv
+
+      - name: 📦 Install dependencies
+        run: uv pip install flet
 
       - name: 🏗️ Build for Windows
         run: uv run flet build windows -v
