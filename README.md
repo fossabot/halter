@@ -54,6 +54,13 @@ uv run flet build windows -v
 
 Подробнее: [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
 
+```bash
+cd "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64"
+signtool sign /fd SHA256 /f "D:\Etc\Source\halter\CERTIFICATE.pfx" /p "YourStrongPassword123" "D:\Etc\Source\halter\FletApp.msix"
+Done Adding Additional Store
+Successfully signed: D:\Etc\Source\halter\FletApp.msix
+```
+
 ---
 
 ## Разработка

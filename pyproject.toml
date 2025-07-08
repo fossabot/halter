@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
 authors = [{ name = "Flet Developer", email = "you@example.com" }]
-dependencies = ["flet==0.28.2"]
+dependencies = ["flet>=0.28.2"]
 
 [tool.flet]
 # Название организации в формате обратного домена (используется для bundle ID)
@@ -28,7 +28,7 @@ path = "src"
 [tool.uv]
 # Зависимости для разработки и тестирования
 dev-dependencies = [
-  "flet[all]==0.28.2",
+  "flet[all]>=0.28.2",
   "pytest>=8.3.5",
   "pytest-cov>=6.1.1",
   "ruff>=0.11.9",

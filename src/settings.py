@@ -114,4 +114,3 @@ class SettingsContainer(ft.Container):
             )
         )
         self.page.update()
-        self.page.update()

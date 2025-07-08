@@ -13,7 +13,6 @@ def build_network(page: ft.Page) -> ft.Card:
     )
 
     def on_color_change(color: dict) -> None:
-        print(f"Выбран цвет: {color['bg']}")
         card_container.bgcolor = color["bg"]
         text_color = color["text"]
 

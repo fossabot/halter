@@ -6,14 +6,6 @@ from constants import PROJECT_CUSTOMER, PROJECT_STAGES, PROJECT_TYPES
 from validation import InputValidator, ValidationType
 
 
-def handle_change(e: ft.ControlEvent) -> None:
-    print(f"Date changed: {e.control.value.strftime('%m/%d/%Y')}")
-
-
-def handle_dismissal(e: ft.ControlEvent) -> None:
-    print(ft.Text("DatePicker dismissed"))
-
-
 def build_overview_tab(page: ft.Page) -> ft.Column:
     validator = InputValidator(page)
 
@@ -57,7 +49,6 @@ def build_overview_tab(page: ft.Page) -> ft.Column:
             customer_dropdown,
             type_dropdown,
             stage_dropdown,
-            # *date_rows,
         ],
         spacing=10,
     )

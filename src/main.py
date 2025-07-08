@@ -1,5 +1,4 @@
 import flet as ft
-from flet_web.fastapi.app import Page
 
 from constants import APP_NAME
 from network import build_network_container
@@ -10,7 +9,7 @@ from utils import emoji_str_cancat
 
 class AppBar:
     def __init__(self, page: ft.Page, drawer: ft.NavigationDrawer) -> None:
-        self.page: Page = page
+        self.page: ft.Page = page
         self.drawer: ft.NavigationDrawer = drawer
 
         def open_drawer(e) -> None:
@@ -50,7 +49,7 @@ class AppBar:
 
 class AppNavigationDrawer:
     def __init__(self, page: ft.Page, container: ft.Container, views: list[ft.Control]) -> None:
-        self.page: Page = page
+        self.page: ft.Page = page
         self.container: ft.Container = container
         self.views: list[ft.Control] = views
         self.controls: list[ft.Control] = [
