@@ -10,8 +10,7 @@ app = typer.Typer(help="Manage networks in the active project")
 @app.command("add")
 def add(
     name: str = typer.Option(..., help="NetBIOS name (≤15 chars)"),
-    ipv4: str = typer.Option(..., help="IPv4 address"),
-    mask: str = typer.Option(..., help="Subnet mask"),
+    ipv4: str = typer.Option(..., help="IPv4 address like 8.8.8.8/16"),
     vlan: int = typer.Option(..., help="VLAN ID (1–4094)"),
 ) -> None:
     """Add a new network to the active project."""
@@ -21,7 +20,7 @@ def add(
         raise typer.Exit()
 
     try:
-        net = Network(name=name, ipv4=ipv4, mask=mask, vlan=vlan)
+        net = Network(name=name, ipv4=ipv4, vlan=vlan)
         project.networks.append(net)
         print(f"[green]Added network '{name}'[/green]")
     except ValueError as e:
@@ -68,8 +67,7 @@ def delete(name: str) -> None:
 @app.command("edit")
 def edit(
     name: str = typer.Argument(..., help="Existing network name to edit"),
-    ipv4: str = typer.Option(None, help="New IPv4"),
-    mask: str = typer.Option(None, help="New mask"),
+    ipv4: str = typer.Option(None, help="New IPv4 like 9.9.9.9/16"),
     vlan: int = typer.Option(None, help="New VLAN"),
 ):
     """Edit a network’s properties."""
@@ -82,8 +80,6 @@ def edit(
         if net.name == name:
             if ipv4:
                 net.ipv4 = ipv4
-            if mask:
-                net.mask = mask
             if vlan:
                 net.vlan = vlan
             try:

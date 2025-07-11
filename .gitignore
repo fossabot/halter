@@ -168,3 +168,4 @@ msixconfig.json
 *.xlnx
 *gui_old/
 *.egg-info/
+/src/gui_old/
