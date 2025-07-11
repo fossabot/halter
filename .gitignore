@@ -163,3 +163,8 @@ cython_debug/
 storage/
 .vscode/
 .ruff_cache/
+project.yaml
+msixconfig.json
+*.xlnx
+*gui_old/
+*.egg-info/

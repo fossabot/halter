@@ -1,6 +1,6 @@
 import pytest
 
-from src.utils import (  # путь подкорректируй под себя
+from src.core.utils import (  # путь подкорректируй под себя
     emoji_str_cancat,
     get_emoji_by_name,
 )

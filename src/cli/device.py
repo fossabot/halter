@@ -1,0 +1,98 @@
+import typer
+from rich import print
+
+from cli.project import project_ref
+from core.models.device import Device
+from core.models.interface import NetworkInterface
+
+app = typer.Typer(help="Manage devices in the active project")
+
+
+@app.command("add")
+def add(
+    name: str,
+    description: str,
+    role: str = typer.Option(
+        ..., help="router | switch | ntp server | workstation | panel"
+    ),
+    interfaces: int = typer.Option(1, help="Number of network interfaces"),
+) -> None:
+    """Add a device with specified number of interfaces"""
+    project = project_ref.get("active")
+    if not project:
+        print("[red]No active project found.[/red]")
+        raise typer.Exit()
+
+    if len(name) > 15:
+        print("[red]NetBIOS name must be 15 characters or fewer.[/red]")
+        raise typer.Exit()
+
+    net_names = [n.name for n in project.networks]
+    if not net_names:
+        print(
+            "[yellow]Warning: No networks defined. Interfaces may fail validation.[/yellow]"
+        )
+
+    interfaces_list = []
+    for i in range(interfaces):
+        print(f"[blue]Configuring interface #{i + 1}[/blue]")
+
+        iface_name = typer.prompt("Interface name")
+        net_id = typer.prompt(f"Network name (one of: {net_names})")
+        ipv4 = typer.prompt("IPv4 address")
+        mask = typer.prompt("Subnet mask")
+        routes_str = typer.prompt("Routes (comma separated IPv4s)", default="")
+
+        route_list = [r.strip() for r in routes_str.split(",") if r.strip()]
+        try:
+            iface = NetworkInterface(
+                number=i + 1,
+                name=iface_name,
+                network_id=net_id,
+                ipv4=ipv4,
+                mask=mask,
+                routes=route_list,
+            )
+            interfaces_list.append(iface)
+        except ValueError as e:
+            print(f"[red]Interface error:[/red] {e}")
+            raise typer.Exit()
+
+    device = Device(
+        name=name,
+        description=description,
+        role=role,
+        interfaces=interfaces_list,
+    )
+    project.devices.append(device)
+    print(f"[green]Device '{name}' added.[/green]")
+
+
+@app.command("list")
+def list_devices():
+    """List all devices"""
+    project = project_ref.get("active")
+    if not project or not project.devices:
+        print("[yellow]No devices to show.[/yellow]")
+        return
+
+    for d in project.devices:
+        print(
+            f"[cyan]{d.name}[/cyan] | {d.role} | Interfaces: {len(d.interfaces)}"
+        )
+
+
+@app.command("delete")
+def delete(name: str):
+    """Delete a device by name"""
+    project = project_ref.get("active")
+    if not project:
+        print("[red]No active project.[/red]")
+        raise typer.Exit()
+
+    before = len(project.devices)
+    project.devices = [d for d in project.devices if d.name != name]
+    if len(project.devices) == before:
+        print(f"[yellow]No device named '{name}' found.[/yellow]")
+    else:
+        print(f"[green]Device '{name}' deleted.[/green]")

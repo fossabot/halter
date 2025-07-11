@@ -45,6 +45,27 @@ jobs:
         with:
           name: halter-deb
           path: ./*.deb
+  
+  build-msix:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+
+    - name: Install dependencies
+      run: pip install toml
+
+    - name: Generate msixconfig.json
+      run: python generate_msixconfig.py
+
+    - name: Build and package MSIX
+      run: |
+        powershell -NoProfile -ExecutionPolicy Bypass -File build_flet_msix.ps1
 
   release:
     needs: [build-linux]

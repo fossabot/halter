@@ -5,44 +5,74 @@ description = "Мультиплатформенное приложение дл�
 readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
-authors = [{ name = "Flet Developer", email = "you@example.com" }]
-dependencies = ["flet>=0.28.2"]
+authors = [{ name = "HK", email = "hk@example.com" }]
+dependencies = ["openpyxl>=3.1.5", "typer>=0.16.0"]
+
+[project.optional-dependencies]
+cli = ["typer>=0.16.0"]
+gui = ["flet>=0.28.2"]
+
+[project.scripts]
+halter = "cli.main:run"
+
+[project.gui-scripts]
+halter = "gui.main:ft.app(target=main)"
 
 [tool.flet]
 # Название организации в формате обратного домена (используется для bundle ID)
 org = "com.mycompany"
-
 # Название продукта (отображается в заголовках, иконках и about-окне)
 product = "halter"
-
 # Название компании (отображается в about-окне)
 company = "Flet"
-
 # Копирайт
 copyright = "Copyright (C) 2025 by Flet"
 
 [tool.flet.app]
 # Путь к исходному коду приложения
-path = "src"
+path = "src/gui/"
 
 [tool.uv]
 # Зависимости для разработки и тестирования
 dev-dependencies = [
-  "flet[all]>=0.28.2",
   "pytest>=8.3.5",
   "pytest-cov>=6.1.1",
   "ruff>=0.11.9",
+  "pre-commit",
 ]
 
 [tool.pytest.ini_options]
 # Устанавливаем корневой путь для pytest
 pythonpath = ["src"]
 
+[tool.coverage.run]
+branch = true
+source = ["core", "cli"]
+
 [tool.ruff]
-line-length = 100
+line-length = 79
 target-version = "py313"
+lint.extend-select = ["I", "N", "UP"]
+fix = true
+extend-exclude = [
+  ".vscode",
+  ".idea",
+  "__pycache__",
+  ".python-version",
+  ".ruff.toml",
+  "ruff.toml",
+  "setup.cfg",
+  "pyproject.toml",
+  ".venv",
+  "build",
+  ".pytest_cache",
+]
 
 [tool.ruff.format]
 quote-style = "double"            # или 'single'
 indent-style = "space"            # можно 'tab'
 skip-magic-trailing-comma = false
+
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

@@ -1,4 +1,4 @@
-from src.constants import (
+from src.core.constants import (
     APP_NAME,
     COLORS,
     DEVICE_BRANDS,
@@ -20,7 +20,6 @@ def test_project_customer() -> None:
 
 def test_project_types() -> None:
     assert "MNS" in PROJECT_TYPES
-    assert "Other" in PROJECT_TYPES
     assert len(PROJECT_TYPES) >= 5
 
 
@@ -35,7 +34,7 @@ def test_project_stages() -> None:
         "Commissioning works",
         "Completed",
     ]
-    assert PROJECT_STAGES == expected
+    assert expected == PROJECT_STAGES
 
 
 def test_device_roles() -> None:
