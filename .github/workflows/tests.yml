@@ -1,5 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-
 name: Tests
 
 on:
@@ -15,6 +13,9 @@ jobs:
   unit-test:
     name: Run unit tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: false
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,16 +27,25 @@ jobs:
         with:
           enable-cache: true
 
-      - name: "Set up Python"
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: "pyproject.toml"
 
-      - name: Install the project
-        run: uv sync --locked --all-extras --dev
+      - name: Create virtual environment and install dependencies
+        run: |
+          uv venv
+          uv sync
 
-      - name: Test with pytest
-        run: uv run pytest --cov --junitxml=junit.xml
+      - name: Run unit tests with coverage
+        run: uv run pytest --cov=. --junitxml=junit.xml
+
+      - name: Upload test results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-results
+          path: junit.xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
