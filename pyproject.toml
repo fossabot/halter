@@ -1,43 +1,49 @@
+[build-system]
+requires = ["setuptools>=80.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "halter"
 version = "0.1.0"
 description = "Мультиплатформенное приложение для управления сетевыми проектами"
 readme = "README.md"
 requires-python = ">=3.13"
+classifiers = [
+  "Development Status :: 1 - MVP",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+]
 license = "MIT"
+license-files = ["LICEN[CS]E*"]
 authors = [{ name = "HK", email = "hk@example.com" }]
-dependencies = ["openpyxl>=3.1.5", "typer>=0.16.0"]
+dependencies = [
+  "typer>=0.12",
+  "flet>=0.11.0",
+  "PyYAML>=6.0.2",
+  "openpyxl>=3.1.5",
+]
+optional-dependencies = { cli = ["typer>=0.16.0"], gui = ["flet>=0.28.2"] }
 
-[project.optional-dependencies]
-cli = ["typer>=0.16.0"]
-gui = ["flet>=0.28.2"]
+[project.urls]
+Homepage = "https://github.com/herokrat/halter"
+Issues = "https://github.com/herokrat/halter/issues"
 
 [project.scripts]
-halter = "cli.main:run"
+halter-cli = "cli.main:run"
 
-[project.gui-scripts]
-halter = "gui.main:ft.app(target=main)"
 
-[tool.flet]
-# Название организации в формате обратного домена (используется для bundle ID)
-org = "com.mycompany"
-# Название продукта (отображается в заголовках, иконках и about-окне)
-product = "halter"
-# Название компании (отображается в about-окне)
-company = "Flet"
-# Копирайт
-copyright = "Copyright (C) 2025 by Flet"
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["cli*", "core*", "gui*"]
 
-[tool.flet.app]
-# Путь к исходному коду приложения
-path = "src/gui/"
 
 [tool.uv]
 # Зависимости для разработки и тестирования
 dev-dependencies = [
   "pytest>=8.3.5",
   "pytest-cov>=6.1.1",
-  "ruff>=0.11.9",
+  "ruff>=0.12.2",
   "pre-commit",
 ]
 
@@ -47,7 +53,7 @@ pythonpath = ["src"]
 
 [tool.coverage.run]
 branch = true
-source = ["core", "cli"]
+source = ["src"]
 
 [tool.ruff]
 line-length = 79
@@ -76,3 +82,20 @@ skip-magic-trailing-comma = false
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[project.gui-scripts]
+halter-gui = "gui.main:run"
+
+[tool.flet]
+# Название организации в формате обратного домена (используется для bundle ID)
+org = "com.mycompany"
+# Название продукта (отображается в заголовках, иконках и about-окне)
+product = "halter"
+# Название компании (отображается в about-окне)
+company = ""
+# Копирайт
+copyright = "Copyright (C) 2025 by HK"
+
+[tool.flet.app]
+# Путь к исходному коду приложения
+path = "src/gui/"

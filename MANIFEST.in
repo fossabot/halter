@@ -1,0 +1,5 @@
+exclude tests/*
+exclude tests/**/*
+exclude src/gui_old/*
+exclude src/gui_old/**/*
+global-exclude __pycache__ *.py[cod] *.pyo

@@ -6,7 +6,7 @@ from core.models.device import Device
 from core.models.interface import NetworkInterface
 from core.models.network import Network
 from core.models.project import Project
-from core.models.software import Software
+from core.models.software import Port, Software
 
 
 def save_project(project: Project, path: str) -> None:
@@ -27,13 +27,13 @@ def save_project(project: Project, path: str) -> None:
         return obj
 
     data = to_dict(project)
-    with open(path, "w") as f:
-        yaml.dump(data, f, sort_keys=False)
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f, sort_keys=False, allow_unicode=True)
 
 
 def load_project(path: str) -> Project:
     """Десериализует проект из YAML-файла"""
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
         if not isinstance(data, dict):
             raise ValueError("YAML root must be a dictionary.")
@@ -48,7 +48,13 @@ def load_project(path: str) -> Project:
         device_params["interfaces"] = interfaces
         devices.append(Device(**device_params))
 
-    software = [Software(**s) for s in data.get("software", [])]
+    software = []
+    for s in data.get("software", []):
+        ports = [Port(**i) for i in s.get("ports", [])]
+        # Создаем устройство, передавая все параметры из словаря
+        software_params = {k: v for k, v in s.items() if k != "ports"}
+        software_params["ports"] = ports
+        software.append(Software(**software_params))
 
     return Project(
         name=data["name"],

@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Literal
+
+from core.constants import DEVICE_ROLES
 
 from .interface import NetworkInterface
 
@@ -8,7 +9,7 @@ from .interface import NetworkInterface
 class Device:
     name: str  # NetBIOS
     description: str
-    role: Literal["router", "switch", "ntp server", "workstation", "panel"]
+    role: DEVICE_ROLES
     interfaces: list[NetworkInterface] = field(default_factory=list)
 
     def __post_init__(self) -> None:

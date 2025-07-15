@@ -1,2 +1,183 @@
-null
-...
+name: OfficeNet
+description: Test
+area_type: MNS
+networks:
+- name: NET2
+  ipv4: 192.168.1.0/28
+  vlan: 100
+- name: NET3
+  ipv4: 192.168.3.0/28
+  vlan: 100
+- name: NET1
+  ipv4: 192.168.0.0/28
+  vlan: 100
+devices: []
+software:
+- name: Alpha.Server
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 4572
+    description: Для приложений Статистика, Конфигуратор, Управляющий
+    direction: outbound
+    protocol: TCP
+  - index: 3388
+    description: Предоставление статистики в Alpha.Historian
+    direction: outbound
+    protocol: TCP
+  - index: 4949
+    description: Сохранение данных в Alpha.Historian
+    direction: outbound
+    protocol: TCP
+  - index: 4388
+    description: Модуль TCP Server - предоставление данных клиентам
+    direction: outbound
+    protocol: TCP
+  - index: 161
+    description: Модуль SNMP Manager - опрос агента
+    direction: outbound
+    protocol: UDP
+  - index: 162
+    description: Модуль SNMP Manager - trap-уведомления
+    direction: outbound
+    protocol: UDP
+  - index: 6551
+    description: Модуль резервирования - порт основного канала для подключения к резервной
+      паре
+    direction: outbound
+    protocol: TCP
+  - index: 6552
+    description: Модуль резервирования - порт резервного канала для подключения к
+      резервной паре
+    direction: outbound
+    protocol: TCP
+  - index: 8080
+    description: Модуль OPC UA Client - порт HTTP/HTTPS протокола
+    direction: outbound
+    protocol: TCP
+  - index: 10502
+    description: Модуль Modbus TCP Master -опрос подчиненной станцией
+    direction: outbound
+    protocol: TCP
+  - index: 4572
+    description: Для приложений Статистика, Конфигуратор, Управляющий
+    direction: inbound
+    protocol: TCP
+  - index: 4388
+    description: Модуль TCP Server - подключение клиентов
+    direction: inbound
+    protocol: TCP
+  - index: 6551
+    description: Модуль резервирования - порт основного канала для подключения к резервной
+      паре
+    direction: inbound
+    protocol: TCP
+  - index: 6552
+    description: Модуль резервирования - порт резервного канала для подключения к
+      резервной паре
+    direction: inbound
+    protocol: TCP
+  - index: 8080
+    description: Модуль OPC UA Client - порт HTTP/HTTPS протокола
+    direction: inbound
+    protocol: TCP
+  - index: 10502
+    description: Модуль Modbus TCP Master -опрос подчиненной станцией
+    direction: inbound
+    protocol: TCP
+- name: Alpha.AccessPoint
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 4388
+    description: Подключение к Alpha.Server
+    direction: outbound
+    protocol: TCP
+  - index: 4976
+    description: Подключение к Alpha.AccessPoint приложений Статистика, Конфигуратор
+    direction: inbound
+    protocol: TCP
+  - index: 4949
+    description: Получение исторических данных от Alpha.Historian
+    direction: inbound
+    protocol: TCP
+- name: Alpha.Domain
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 11010
+    description: Alpha.Domain.Agent
+    direction: outbound
+    protocol: TCP
+  - index: 11020
+    description: Alpha.Net.Agent
+    direction: outbound
+    protocol: TCP
+  - index: 11010
+    description: Alpha.Domain.Agent
+    direction: inbound
+    protocol: TCP
+  - index: 11020
+    description: Alpha.Net.Agent
+    direction: inbound
+    protocol: TCP
+- name: Alpha.Security
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 389
+    description: Конфигуратор, Агент
+    direction: outbound
+    protocol: TCP
+  - index: 389
+    description: LDAP-сервер - запросы данных пользователей, их прав, конфигурирование
+    direction: inbound
+    protocol: TCP
+- name: Alpha.DevStudio
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 11010
+    description: Alpha.Net.Agent
+    direction: outbound
+    protocol: TCP
+  - index: 161
+    description: SNMP Manager
+    direction: outbound
+    protocol: UDP
+- name: Alpha.HMI
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 4388
+    description: Оперативные данные Alpha.Server
+    direction: outbound
+    protocol: TCP
+  - index: 4950
+    description: Исторические данные Alpha.Historian
+    direction: outbound
+    protocol: TCP
+- name: Alpha.Historian
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 3388
+    description: Подключение приложения Статистика
+    direction: inbound
+    protocol: TCP
+  - index: 4949
+    description: Сохранение данных
+    direction: inbound
+    protocol: TCP
+- name: Alpha.Licensing
+  description: Alpha.Server
+  version: v1.0
+  ports:
+  - index: 15150
+    description: Подключение для запроса лицензий
+    direction: inbound
+    protocol: TCP
+  - index: 15151
+    description: Подключение приложения Статистика
+    direction: inbound
+    protocol: TCP

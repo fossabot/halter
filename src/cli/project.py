@@ -27,6 +27,17 @@ if Path(DEFAULT_PATH).exists():
             )
     except Exception as e:
         print(f"[red]Failed to auto-load project.yaml:[/red] {e}")
+else:
+    project = Project(
+        name="Default name",
+        description="Default description",
+        area_type="Other",
+        networks=[],
+        devices=[],
+        software=[],
+    )
+    project_ref["active"] = project
+    print(f"[blue]Default project was created `{project.name}`[/blue]")
 
 
 @app.command("create")

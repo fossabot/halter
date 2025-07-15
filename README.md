@@ -1,118 +1,143 @@
-# Halter
+# 🧠 Halter
 
+![Logo](/src/assets/logo.jpg "Halter")
 ![Tests](https://github.com/herokrat/halter/actions/workflows/tests.yml/badge.svg)
 [![codecov](https://codecov.io/gh/herokrat/halter/graph/badge.svg?token=SOY22473CK)](https://codecov.io/gh/herokrat/halter)
-![License](https://img.shields.io/github/license/herokrat/halter)
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)
+![License](https://img.shields.io/github/license/herokrat/halter)
+[![Made with Typer](https://img.shields.io/badge/-Made%20with%20Typer-green?logo=python&logoColor=white)](https://github.com/tiangolo/typer)
+[![Made with Flet](https://img.shields.io/badge/Made%20with-Flet-blue?logo=flutter)](https://flet.dev/)
+![Build](https://img.shields.io/github/actions/workflow/status/herokrat/halter/tests.yml?label=build)
+[![Last commit](https://img.shields.io/github/last-commit/herokrat/halter)](https://github.com/herokrat/halter/commits/main)
+[![Issues](https://img.shields.io/github/issues/herokrat/halter)](https://github.com/herokrat/halter/issues)
+[![PRs](https://img.shields.io/github/issues-pr/herokrat/halter)](https://github.com/herokrat/halter/pulls)
 
-## Описание
-
-Приложение Halter — мультиплатформенный GUI на базе Flet. Позволяет структурировать сети и устройства, хранит проекты в формате YAML, поддерживает работу как в десктопном, так и в веб-режиме.
-
----
-
-## Запуск приложения
-
-### Через uv (универсальный запуск)
-
-* Запуск десктопного приложения:
-
-```bash
-uv run flet run
-```
-
-* Запуск веб-приложения:
-
-```bash
-uv run flet run --web
-```
-
-Для подробностей смотрите [Getting Started Guide](https://flet.dev/docs/getting-started/).
+**Halter** — это мультиплатформенное приложение (CLI + GUI) для планирования, моделирования и документирования сетевой инфраструктуры. Построено на модульной архитектуре с разделением на `core`, `cli` и `gui`.
 
 ---
 
-## Сборка приложения
+## 🚀 Возможности
+
+- 📦 Мощная библиотека `halter-core` для описания сетей, оборудования и ПО
+- 🔧 Удобный CLI-интерфейс `halter-cli` на основе [Typer](https://typer.tiangolo.com/)
+- 🖼️ Современный GUI `halter-gui` на базе [Flet](https://flet.dev/)
+- 🧪 Покрытие тестами, линтинг, CI/CD.
+- 📁 Хранение конфигураций в YAML с возможностью импорта/экспорта
+- 🛠️ Структура монорепозитория с `hatch` и `uv`
 
 ---
 
-### Linux
+## 🛠️ Установка
+
+### 1. Установите [uv](https://github.com/astral-sh/uv) и [hatch](https://hatch.pypa.io/)
 
 ```bash
-uv run flet build linux -v
-```
+pip install uv hatch
+````
 
-Подробнее: [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
-
----
-
-### Windows
+### 2. Клонируйте репозиторий и установите зависимости
 
 ```bash
-uv run flet build windows -v
-```
-
-Подробнее: [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
-
-```bash
-cd "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64"
-signtool sign /fd SHA256 /f "D:\Etc\Source\halter\CERTIFICATE.pfx" /p "YourStrongPassword123" "D:\Etc\Source\halter\FletApp.msix"
-Done Adding Additional Store
-Successfully signed: D:\Etc\Source\halter\FletApp.msix
+git clone https://github.com/your-name/halter.git
+cd halter
+uv venv
+uv pip install .
 ```
 
 ---
 
-## Разработка
+## ⚙️ Использование
 
-* Клонируйте репозиторий и установите зависимости.
-
-* Запускайте приложение локально через uv (см. раздел Запуск).
-
-* Код написан на Python 3.13, используется Flet и современный стек библиотек.
-
----
-
-## Тестирование
-
-* Для запуска тестов используется `pytest`.
-
-* Запустить все тесты можно командой:
+### CLI
 
 ```bash
-uv run pytest
+halter --help
 ```
 
-* Для проверки покрытия кода используйте:
+Пример:
 
 ```bash
-uv run pytest --cov=src --cov-report=term-missing
+halter add device --name "Router-1" --ip 10.0.0.1
 ```
 
-* Рекомендуется покрывать тестами все ключевые модули и функции.
+### GUI
+
+```bash
+uv run halter-gui
+```
 
 ---
 
-## Вклад
+## 🧪 Тестирование
 
-* Для новых функций создавайте отдельные ветки.
-
-* Пишите понятные и лаконичные коммиты.
-
-* Добавляйте тесты для новых возможностей и багфиксов.
-
-* Перед отправкой пулл-реквеста убедитесь, что все тесты проходят.
+```bash
+hatch run test
+```
 
 ---
 
-## Контакты и поддержка
+## 🧼 Линтинг и форматирование
 
-* Вопросы и предложения направляйте в issue или на почту проекта.
-
-* Для обсуждения используйте соответствующие каналы связи.
+```bash
+hatch run lint
+hatch run format
+```
 
 ---
 
-Если хочешь, могу помочь с шаблоном CONTRIBUTING.md или с документацией API.
+## 📦 Сборка
+
+```bash
+make build
+```
+
+---
+
+## 📤 Публикация на PyPI
+
+Убедитесь, что у вас установлен `PYPI_TOKEN` в GitHub Secrets или `.env`:
+
+```bash
+make publish
+```
+
+---
+
+## 🗂️ Структура проекта
+
+```bash
+halter/
+├── core/        # Библиотека с логикой
+├── cli/         # Консольное приложение
+├── gui/         # Графический интерфейс
+├── tests/       # Тесты
+├── pyproject.toml
+├── Makefile
+```
+
+---
+
+## 🧠 Зависимости
+
+- Python ≥ 3.13
+- [Typer](https://typer.tiangolo.com/)
+- [Flet](https://flet.dev/)
+- [uv](https://github.com/astral-sh/uv)
+- [hatch](https://hatch.pypa.io/)
+- [pytest](https://docs.pytest.org/)
+- [ruff](https://docs.astral.sh/ruff/)
+
+---
+
+## 📝 Лицензия
+
+[MIT License](./LICENSE)
+
+---
+
+## 👤 Автор
+
+**HK** — [hk@example.com](mailto:hk@example.com)
 
 ---

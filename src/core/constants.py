@@ -1,8 +1,10 @@
+from typing import Literal
+
 APP_NAME: str = "Halter"
 DEFAULT_PATH = "project.yaml"
 
 PROJECT_CUSTOMER: list[str] = ["Transneft", "Other"]
-PROJECT_TYPES: list[str] = ["MNS", "SAR", "PT", "ASME", "PNS", "RP"]
+PROJECT_TYPES: list[str] = ["MNS", "SAR", "PT", "ASME", "PNS", "RP", "Other"]
 PROJECT_STAGES: list[str] = [
     "Tender",  # Тендер
     "Planning",  # Подбор спецификации
@@ -14,7 +16,7 @@ PROJECT_STAGES: list[str] = [
     "Completed",  # Завершение проекта
 ]
 
-DEVICE_ROLES: list[str] = [
+DEVICE_ROLES = Literal[
     "Router",  # Маршрутизатор
     "Switch",  # Коммутатор
     "Panel",  # Панель сигнализации
@@ -36,4 +38,11 @@ COLORS: list[dict[str, str]] = [
     {"bg": "#E91E63", "text": "white"},  # Pink
     {"bg": "#607D8B", "text": "white"},  # Blue Grey
     {"bg": "#FFC107", "text": "black"},  # Amber
+]
+
+NETWORK_PROTOCOLS = Literal["TCP", "UDP", "ICMP"]
+NETWORK_DIRECTION = Literal["inbound", "outbound", "io"]
+NETWORK_TIER = Literal["access", "distribution", "core"]
+NETWORK_ZONE = Literal[
+    "low-level", "medium-level", "high-level", "DMZ", "Guest", "IoT"
 ]
