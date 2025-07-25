@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 
 @dataclass(slots=True, kw_only=True)
 class NetworkInterface:
-    number: int
     name: str
     network_id: str  # Will match Network.name
     ipv4: str

@@ -1,66 +1,90 @@
+# config_io.py
+"""
+Версия, убирающая теги классов StrEnum/датаклассов в YAML
+"""
+
 from dataclasses import fields, is_dataclass
 
 import yaml
+from yaml import CSafeDumper as Dumper
+from yaml import CSafeLoader as Loader
 
+from core.models.address import AddressingType
 from core.models.device import Device
 from core.models.interface import NetworkInterface
-from core.models.network import Network
+from core.models.network import Network, NetworkTier, NetworkTopology
 from core.models.project import Project
 from core.models.software import Port, Software
 
+# Представитель для StrEnum: выводим просто строку
+
+
+def _enum_representer(dumper, obj):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", obj.value)
+
+
+yaml.add_multi_representer(NetworkTopology, _enum_representer, Dumper=Dumper)
+yaml.add_multi_representer(NetworkTier, _enum_representer, Dumper=Dumper)
+yaml.add_multi_representer(AddressingType, _enum_representer, Dumper=Dumper)
+
+# Преобразование любого объекта в примитивные структуры для dump
+
+
+def to_dict(obj):
+    if is_dataclass(obj):
+        return {f.name: to_dict(getattr(obj, f.name)) for f in fields(obj)}
+    elif hasattr(obj, "__slots__"):
+        return {slot: to_dict(getattr(obj, slot)) for slot in obj.__slots__}
+    elif isinstance(obj, list):
+        return [to_dict(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {k: to_dict(v) for k, v in obj.items()}
+    return obj
+
 
 def save_project(project: Project, path: str) -> None:
-    """Сериализует проект в YAML-файл с поддержкой слотов"""
-
-    def to_dict(obj):
-        """Рекурсивно преобразует объекты со слотами/датаклассы в словари"""
-        if is_dataclass(obj):
-            # Для датаклассов используем официальное API
-            return {f.name: to_dict(getattr(obj, f.name)) for f in fields(obj)}
-        elif hasattr(obj, "__slots__"):
-            # Для обычных классов со слотами
-            return {
-                slot: to_dict(getattr(obj, slot)) for slot in obj.__slots__
-            }
-        elif isinstance(obj, list):
-            return [to_dict(item) for item in obj]
-        return obj
-
+    """Сериализует Project в YAML без тегов классов"""
     data = to_dict(project)
     with open(path, "w", encoding="utf-8") as f:
-        yaml.dump(data, f, sort_keys=False, allow_unicode=True)
+        yaml.dump(data, f, Dumper=Dumper, sort_keys=False, allow_unicode=True)
 
 
 def load_project(path: str) -> Project:
-    """Десериализует проект из YAML-файла"""
+    """Десериализует Project из YAML с учетом StrEnum"""
     with open(path, encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-        if not isinstance(data, dict):
-            raise ValueError("YAML root must be a dictionary.")
+        data = yaml.load(f, Loader=Loader)
+    if not isinstance(data, dict):
+        raise ValueError("YAML root must be mapping with Project fields.")
 
-    networks = [Network(**n) for n in data.get("networks", [])]
+    # Сети
+    nets = []
+    for n in data.get("networks", []):
+        n["topology"] = NetworkTopology(n["topology"])
+        n["tier"] = NetworkTier(n["tier"])
+        n["address_type"] = AddressingType(n["address_type"])
+        nets.append(Network(**n))
 
-    devices = []
+    # Устройства
+    devs = []
     for d in data.get("devices", []):
         interfaces = [NetworkInterface(**i) for i in d.get("interfaces", [])]
-        # Создаем устройство, передавая все параметры из словаря
-        device_params = {k: v for k, v in d.items() if k != "interfaces"}
-        device_params["interfaces"] = interfaces
-        devices.append(Device(**device_params))
+        params = {k: v for k, v in d.items() if k != "interfaces"}
+        params["interfaces"] = interfaces
+        devs.append(Device(**params))
 
-    software = []
+    # ПО
+    sws = []
     for s in data.get("software", []):
-        ports = [Port(**i) for i in s.get("ports", [])]
-        # Создаем устройство, передавая все параметры из словаря
-        software_params = {k: v for k, v in s.items() if k != "ports"}
-        software_params["ports"] = ports
-        software.append(Software(**software_params))
+        ports = [Port(**p) for p in s.get("ports", [])]
+        params = {k: v for k, v in s.items() if k != "ports"}
+        params["ports"] = ports
+        sws.append(Software(**params))
 
     return Project(
         name=data["name"],
-        description=data["description"],
-        area_type=data["area_type"],
-        networks=networks,
-        devices=devices,
-        software=software,
+        description=data.get("description", ""),
+        area_type=data.get("area_type"),
+        networks=nets,
+        devices=devs,
+        software=sws,
     )

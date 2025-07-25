@@ -41,8 +41,7 @@ def list_networks() -> None:
 
     for idx, net in enumerate(project.networks, 1):
         print(
-            f"[cyan]{idx}. {net.name}[/cyan]| IP: {net.ipv4}| Mask: {net.mask}\
-                | VLAN: {net.vlan}"
+            f"[cyan]{idx}. {net.name}[/cyan]| IP: {net.address}| VLAN: {net.vlan}"
         )
 
 

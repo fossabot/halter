@@ -2,16 +2,35 @@ name: OfficeNet
 description: Test
 area_type: MNS
 networks:
-- name: NET2
-  ipv4: 192.168.1.0/28
-  vlan: 100
-- name: NET3
-  ipv4: 192.168.3.0/28
-  vlan: 100
-- name: NET1
-  ipv4: 192.168.0.0/28
-  vlan: 100
-devices: []
+- name: VLAN10_Network
+  vlan:
+    id: 10
+    name: Office_VLAN
+  topology: Star
+  tier: SCADA and HMI
+  address_type: IPv4 Network
+  address: 192.168.10.0/24
+devices:
+- name: PLC1
+  model: Siemens S7-1200
+  role: PLC
+  interfaces:
+  - name: eth0
+    network_id: VLAN10_Network
+    ipv4: 192.168.10.101
+    routes: []
+  - name: eth1
+    network_id: VLAN20_Field
+    ipv4: 10.0.0.10
+    routes: []
+- name: HMI_Station
+  model: Wonderware InTouch
+  role: Workstation
+  interfaces:
+  - name: eth0
+    network_id: VLAN10_Network
+    ipv4: 192.168.10.150
+    routes: []
 software:
 - name: Alpha.Server
   description: Alpha.Server
