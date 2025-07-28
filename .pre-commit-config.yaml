@@ -6,6 +6,7 @@ repos:
     hooks:
     -   id: check-added-large-files
     -   id: check-toml
+        files: ^pyproject\.toml$
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
 -   repo: https://github.com/astral-sh/ruff-pre-commit
