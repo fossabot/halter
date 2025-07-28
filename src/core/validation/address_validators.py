@@ -1,4 +1,4 @@
-# address_validation.py
+# src/core/validation/address_validators.py
 """Унифицированная валидация через регулярные шаблоны"""
 
 import ipaddress
@@ -6,25 +6,42 @@ import re
 
 from core.models.address import AddressingType
 
+# Регулярные шаблоны для всех типов
 _validation_patterns: dict[AddressingType, tuple[str, str]] = {
     AddressingType.OPC_UA_ADDRESS: (
-        r"^opc\.tcp://[\w.-]+(:\d+)?(/.*)?$",
+        r"opc\.tcp://[\w\.-]+(?::\d+)?(?:/.*)?$",
         "OPC UA address",
     ),
     AddressingType.DNS_NAME: (
-        r"^[\w]([\w\-]{0,61}[\w])?(\.[\w]([\w\-]{0,61}[\w])?)*$",
+        r"[\w](?:[\w\-]{0,61}[\w])?(?:\.[\w](?:[\w\-]{0,61}[\w])?)*$",
         "DNS name",
     ),
-    AddressingType.HTTP_URL: (r"^https?://[\w.-]+(:\d+)?(/.*)?$", "HTTP URL"),
+    AddressingType.HTTP_URL: (
+        r"https?://[\w\.-]+(?::\d+)?(?:/.*)?$",
+        "HTTP URL",
+    ),
     AddressingType.EMAIL_ADDRESS: (
-        r"^[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,}$",
-        "email",
+        r"[\w._%+-]+@[\w\.-]+\.[A-Za-z]{2,}$",
+        "Email",
+    ),
+    AddressingType.MES_TAG_ADDRESS: (
+        r"[A-Za-z][\w_]*(?:\.[A-Za-z][\w_]*){1,3}$",
+        "MES tag",
+    ),
+    AddressingType.SCADA_TAG_ADDRESS: (
+        r"[A-Za-z][\w_]*(?:\.[A-Za-z][\w_]*)*$",
+        "SCADA tag",
+    ),
+    AddressingType.ANALOG_SIGNAL: (
+        r"(?:\d+-\d+(?:mA|V)|\d+%)$",
+        "Analog signal",
     ),
 }
 
 
 def _validate_with_pattern(addr: str, pattern: str, desc: str) -> None:
-    if not re.match(pattern, addr):
+    # Полное совпадение строки
+    if not re.fullmatch(pattern, addr):
         raise ValueError(f"Invalid {desc}: {addr}")
 
 
@@ -50,14 +67,11 @@ def _validate_slaveid(addr: str) -> None:
         raise ValueError(f"Slave ID must be integer 0-247: {addr}")
 
 
-def _validate_analog_signal(addr: str) -> None:
-    if not re.match(r"^(?:\d+-\d+(?:mA|V)|\d+%)$", addr):
-        raise ValueError(f"Invalid analog signal: {addr}")
-
-
 # Словарь валидаторов
 VALIDATION_FUNCTIONS: dict[AddressingType, callable] = {
-    AddressingType.ANALOG_SIGNAL: _validate_analog_signal,
+    AddressingType.ANALOG_SIGNAL: lambda a: _validate_with_pattern(
+        a, *_validation_patterns[AddressingType.ANALOG_SIGNAL]
+    ),
     AddressingType.MODBUS_RTU_ADDRESS: _validate_slaveid,
     AddressingType.IP_NETWORK: _validate_ipv4_network,
     AddressingType.IP_ADDRESS: _validate_ipv4_address,
@@ -65,13 +79,13 @@ VALIDATION_FUNCTIONS: dict[AddressingType, callable] = {
         a, *_validation_patterns[AddressingType.OPC_UA_ADDRESS]
     ),
     AddressingType.MES_TAG_ADDRESS: lambda a: _validate_with_pattern(
-        a, r"^[A-Za-z][\w_]*(?:\.[A-Za-z][\w_]*){1,3}$", "MES tag"
+        a, *_validation_patterns[AddressingType.MES_TAG_ADDRESS]
     ),
     AddressingType.DNS_NAME: lambda a: _validate_with_pattern(
         a, *_validation_patterns[AddressingType.DNS_NAME]
     ),
     AddressingType.SCADA_TAG_ADDRESS: lambda a: _validate_with_pattern(
-        a, r"^[A-Za-z][\w_]*(?:\.[A-Za-z][\w_]*)*$", "SCADA tag"
+        a, *_validation_patterns[AddressingType.SCADA_TAG_ADDRESS]
     ),
     AddressingType.HTTP_URL: lambda a: _validate_with_pattern(
         a, *_validation_patterns[AddressingType.HTTP_URL]

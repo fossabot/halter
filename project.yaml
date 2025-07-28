@@ -12,6 +12,7 @@ networks:
   address: 192.168.10.0/24
 devices:
 - name: PLC1
+  description: PLC Primary
   model: Siemens S7-1200
   role: PLC
   interfaces:
@@ -23,7 +24,8 @@ devices:
     network_id: VLAN20_Field
     ipv4: 10.0.0.10
     routes: []
-- name: HMI_Station
+- name: HMI-Station
+  description: HMI Station
   model: Wonderware InTouch
   role: Workstation
   interfaces:

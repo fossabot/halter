@@ -1,14 +1,28 @@
 from dataclasses import dataclass, field
+from enum import StrEnum
 
-from core.constants import NETWORK_DIRECTION, NETWORK_PROTOCOLS
+NETWORK_PROTOCOLS: list[str] = ["TCP", "UDP", "ICMP"]
+NETWORK_DIRECTION: list[str] = ["inbound", "outbound", "io"]
+
+
+class Protocols(StrEnum):
+    TCP = "TCP"
+    UDP = "UDP"
+    ICMP = "ICMP"
+
+
+class Direction(StrEnum):
+    In = "inbound"
+    Out = "outbound"
+    IO = "io"
 
 
 @dataclass(slots=True, kw_only=True)
 class Port:
     index: int
     description: str
-    direction: NETWORK_DIRECTION
-    protocol: NETWORK_PROTOCOLS
+    direction: Direction
+    protocol: Protocols
 
     def __post_init__(self) -> None:
         if not (1 <= self.index <= 65535):

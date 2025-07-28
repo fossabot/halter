@@ -12,6 +12,7 @@ app = typer.Typer(help="Manage devices in the active project")
 def add(
     name: str,
     description: str,
+    model: str,
     role: str = typer.Option(
         ..., help="router | switch | ntp server | workstation | panel"
     ),
@@ -61,6 +62,7 @@ def add(
     device = Device(
         name=name,
         description=description,
+        model=model,
         role=role,
         interfaces=interfaces_list,
     )
@@ -69,7 +71,7 @@ def add(
 
 
 @app.command("list")
-def list_devices():
+def list_devices() -> None:
     """List all devices"""
     project = project_ref.get("active")
     if not project or not project.devices:
@@ -83,7 +85,7 @@ def list_devices():
 
 
 @app.command("delete")
-def delete(name: str):
+def delete(name: str) -> None:
     """Delete a device by name"""
     project = project_ref.get("active")
     if not project:

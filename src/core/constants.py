@@ -39,10 +39,3 @@ COLORS: list[dict[str, str]] = [
     {"bg": "#607D8B", "text": "white"},  # Blue Grey
     {"bg": "#FFC107", "text": "black"},  # Amber
 ]
-
-NETWORK_PROTOCOLS = Literal["TCP", "UDP", "ICMP"]
-NETWORK_DIRECTION = Literal["inbound", "outbound", "io"]
-NETWORK_TIER = Literal["access", "distribution", "core"]
-NETWORK_ZONE = Literal[
-    "low-level", "medium-level", "high-level", "DMZ", "Guest", "IoT"
-]
