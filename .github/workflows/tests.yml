@@ -35,13 +35,10 @@ jobs:
       - name: Create virtual environment and install dependencies
         run: |
           uv venv
-          uv sync --with=dev
+          uv sync
 
       - name: Run unit tests with coverage
-        run: |
-          uv run pytest --cov=. --cov-report=xml:coverage.xml --junitxml=junit.xml
-        # Verify coverage file was created
-        shell: bash
+        run: uv run pytest --cov=. --cov-report=xml:coverage.xml --junitxml=junit.xml
 
       - name: Upload test results artifact
         if: always()
@@ -49,7 +46,6 @@ jobs:
         with:
           name: junit-results
           path: junit.xml
-          if-no-files-found: warn
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
