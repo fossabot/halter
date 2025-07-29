@@ -4,6 +4,7 @@
 """
 
 from dataclasses import fields, is_dataclass
+from typing import Any
 
 import yaml
 from yaml import CSafeDumper as Dumper
@@ -12,14 +13,14 @@ from yaml import CSafeLoader as Loader
 from core.models.address import AddressingType
 from core.models.device import Device
 from core.models.interface import NetworkInterface
-from core.models.network import Network, NetworkTier, NetworkTopology
+from core.models.network import VLAN, Network, NetworkTier, NetworkTopology
 from core.models.project import Project
 from core.models.software import Port, Software
 
 # Представитель для StrEnum: выводим просто строку
 
 
-def _enum_representer(dumper, obj):
+def _enum_representer(dumper: Any, obj: Any) -> Any:
     return dumper.represent_scalar("tag:yaml.org,2002:str", obj.value)
 
 
@@ -30,7 +31,7 @@ yaml.add_multi_representer(AddressingType, _enum_representer, Dumper=Dumper)
 # Преобразование любого объекта в примитивные структуры для dump
 
 
-def to_dict(obj):
+def to_dict(obj: Any) -> Any:
     if is_dataclass(obj):
         return {f.name: to_dict(getattr(obj, f.name)) for f in fields(obj)}
     elif hasattr(obj, "__slots__"):
@@ -62,6 +63,8 @@ def load_project(path: str) -> Project:
         n["topology"] = NetworkTopology(n["topology"])
         n["tier"] = NetworkTier(n["tier"])
         n["address_type"] = AddressingType(n["address_type"])
+        if n["vlan"] is not None:
+            n["vlan"] = VLAN(id=n["vlan"]["id"], name=n["vlan"]["name"])
         nets.append(Network(**n))
 
     # Устройства
@@ -82,8 +85,8 @@ def load_project(path: str) -> Project:
 
     return Project(
         name=data["name"],
-        description=data.get("description", ""),
-        area_type=data.get("area_type"),
+        description=data["description"],
+        area_type=data["area_type"],
         networks=nets,
         devices=devs,
         software=sws,

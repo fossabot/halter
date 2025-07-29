@@ -14,3 +14,4 @@ class AddressingType(StrEnum):
     DATABASE_CONNECTION = "Database Connection String"
     HTTP_URL = "HTTP URL"
     EMAIL_ADDRESS = "Email Address"
+    REGULBUS_CRATE_ADDRESS = "RegulBus Crate Address"

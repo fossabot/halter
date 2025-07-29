@@ -1,5 +1,3 @@
-from typing import Literal
-
 APP_NAME: str = "Halter"
 DEFAULT_PATH = "project.yaml"
 
@@ -16,13 +14,14 @@ PROJECT_STAGES: list[str] = [
     "Completed",  # Завершение проекта
 ]
 
-DEVICE_ROLES = Literal[
+DEVICE_ROLES: list[str] = [
     "Router",  # Маршрутизатор
     "Switch",  # Коммутатор
     "Panel",  # Панель сигнализации
     "Timeserver",  # Сервер точного времени
     "Workstation",  # АРМ
     "DMZ",  # Сервер демилитаризованной зоны
+    "PLC",
 ]
 
 DEVICE_BRANDS: list[str] = ["Moxa", "Zelax", "HP", "iROBO"]

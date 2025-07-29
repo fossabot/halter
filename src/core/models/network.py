@@ -41,18 +41,20 @@ class VLAN:
 @dataclass(slots=True, kw_only=True)
 class Network:
     name: str
-    vlan: VLAN | None
+    vlan: VLAN | None = None
     topology: NetworkTopology
     tier: NetworkTier
     address_type: AddressingType
-    address: str
+    address: str | None = None
+    gateway: str | None = None
 
     def __post_init__(self) -> None:
         self._validate_address()
 
     def _validate_address(self) -> None:
-        if validator := VALIDATION_FUNCTIONS.get(self.address_type):
-            validator(self.address)
+        if self.address is not None:
+            if validator := VALIDATION_FUNCTIONS.get(self.address_type):
+                validator(self.address)
 
     def update_address(
         self,

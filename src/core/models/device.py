@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 
-from core.constants import DEVICE_ROLES
-from core.validation.validation import validate_netbios_name
+from core.validation.validation import validate_netbios_name, validate_role
 
 from .interface import NetworkInterface
 
@@ -11,8 +10,9 @@ class Device:
     name: str  # NetBIOS
     description: str
     model: str
-    role: DEVICE_ROLES
+    role: str
     interfaces: list[NetworkInterface] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         validate_netbios_name(self.name)
+        validate_role(self.role)

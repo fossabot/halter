@@ -2,28 +2,70 @@ name: OfficeNet
 description: Test
 area_type: MNS
 networks:
-- name: VLAN10_Network
+- name: USOMNS1-P
+  vlan: null
+  topology: Ring
+  tier: I/O and Distributed Controllers
+  address_type: RegulBus Crate Address
+  address: null
+  gateway: null
+- name: USOMNS1-S
+  vlan: null
+  topology: Ring
+  tier: I/O and Distributed Controllers
+  address_type: RegulBus Crate Address
+  address: null
+  gateway: null
+- name: SUMNS1-P
+  vlan: null
+  topology: Point-to-Point
+  tier: Controllers
+  address_type: IPv4 Network
+  address: 192.168.98.0/24
+  gateway: null
+- name: SUMNS1-S
+  vlan: null
+  topology: Point-to-Point
+  tier: Controllers
+  address_type: IPv4 Network
+  address: 192.168.99.0/24
+  gateway: null
+- name: VUMNS1-P
   vlan:
-    id: 10
-    name: Office_VLAN
+    id: 1111
+    name: MNS1-P
   topology: Star
   tier: SCADA and HMI
   address_type: IPv4 Network
-  address: 192.168.10.0/24
+  address: 192.168.201.0/28
+  gateway: 192.168.201.3
+- name: VUMNS1-S
+  vlan:
+    id: 2111
+    name: MNS1-S
+  topology: Star
+  tier: SCADA and HMI
+  address_type: IPv4 Network
+  address: 192.168.201.128/28
+  gateway: 192.168.201.131
 devices:
-- name: PLC1
-  description: PLC Primary
-  model: Siemens S7-1200
+- name: PLCMNS-CK-EX-P
+  description: PLC Primary (A)
+  model: REGUL R500
   role: PLC
   interfaces:
-  - name: eth0
+  - name: eth3
     network_id: VLAN10_Network
-    ipv4: 192.168.10.101
     routes: []
-  - name: eth1
+    address_type: IPv4 Address
+    address: 192.168.10.101
+    vlan_mode: Access
+  - name: eth4
     network_id: VLAN20_Field
-    ipv4: 10.0.0.10
     routes: []
+    address_type: IPv4 Address
+    address: 10.0.0.10
+    vlan_mode: Access
 - name: HMI-Station
   description: HMI Station
   model: Wonderware InTouch
@@ -31,8 +73,10 @@ devices:
   interfaces:
   - name: eth0
     network_id: VLAN10_Network
-    ipv4: 192.168.10.150
     routes: []
+    address_type: IPv4 Address
+    address: 192.168.10.150
+    vlan_mode: Access
 software:
 - name: Alpha.Server
   description: Alpha.Server

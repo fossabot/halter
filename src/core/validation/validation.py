@@ -2,6 +2,8 @@
 
 import re
 
+from core.constants import DEVICE_ROLES
+
 
 def validate_netbios_name(name: str) -> None:
     """
@@ -12,3 +14,11 @@ def validate_netbios_name(name: str) -> None:
     pattern = r"^[A-Za-z0-9-]{1,15}$"
     if not re.fullmatch(pattern, name):
         raise ValueError(f"Invalid NetBIOS name: {name}")
+
+
+def validate_role(role: str) -> None:
+    """
+    Валидирует роль среди предопределенных ролей
+    """
+    if role not in DEVICE_ROLES:
+        raise ValueError(f"Invalid device role: {role}")

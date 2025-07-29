@@ -10,9 +10,9 @@ app = typer.Typer(help="Manage devices in the active project")
 
 @app.command("add")
 def add(
-    name: str,
-    description: str,
-    model: str,
+    name: str = typer.Option(..., help="NetBIOS name (≤15 chars)"),
+    description: str = typer.Option(..., help="Device description"),
+    model: str = typer.Option(..., help="Device model"),
     role: str = typer.Option(
         ..., help="router | switch | ntp server | workstation | panel"
     ),
@@ -40,19 +40,19 @@ def add(
 
         iface_name = typer.prompt("Interface name")
         net_id = typer.prompt(f"Network name (one of: {net_names})")
-        ipv4 = typer.prompt("IPv4 address")
-        mask = typer.prompt("Subnet mask")
+        address = typer.prompt("IPv4 address")
         routes_str = typer.prompt("Routes (comma separated IPv4s)", default="")
-
+        address_type = typer.prompt("Address type", default="IPv4 Address")
+        vlan_mode = typer.prompt("Vlan mode", default="Access")
         route_list = [r.strip() for r in routes_str.split(",") if r.strip()]
         try:
             iface = NetworkInterface(
-                number=i + 1,
                 name=iface_name,
                 network_id=net_id,
-                ipv4=ipv4,
-                mask=mask,
+                address=address,
                 routes=route_list,
+                address_type=address_type,
+                vlan_mode=vlan_mode,
             )
             interfaces_list.append(iface)
         except ValueError as e:
@@ -98,3 +98,20 @@ def delete(name: str) -> None:
         print(f"[yellow]No device named '{name}' found.[/yellow]")
     else:
         print(f"[green]Device '{name}' deleted.[/green]")
+
+
+@app.command("list-interfaces")
+def list_interfaces(name: str) -> None:
+    """List of interfaces of current device"""
+    project = project_ref.get("active")
+    if not project:
+        print("[red]No active project.[/red]")
+        raise typer.Exit()
+    for d in project.devices:
+        if d.name == name:
+            device = d
+    else:
+        if device is None:
+            print(f"[yellow]No device named '{name}' found.[/yellow]")
+    for interface in device.interfaces:
+        print(f"[cyan]{interface.name}[/cyan]")

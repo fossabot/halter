@@ -143,12 +143,13 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+*.xlsx
 # Pyre type checker
 .pyre/
 
 # pytype static type analyzer
 .pytype/
-
+py.typed
 # Cython debug symbols
 cython_debug/
 

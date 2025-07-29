@@ -1,10 +1,15 @@
+# src/core/services/export_to_xlnx.py
 from openpyxl import Workbook
+from openpyxl.styles import Font
+from openpyxl.worksheet.worksheet import Worksheet
+
+from core.models.project import Project
 
 
-def export_to_xlsx(project, output_xlsx: str) -> None:
+def export_to_xlsx(project: Project, output_xlsx: str) -> None:
     # Create Excel workbook
     wb = Workbook()
-    ws = wb.active
+    ws: Worksheet = wb.active  # type: ignore
     ws.title = "Network Configuration"
 
     # Write headers
@@ -14,16 +19,15 @@ def export_to_xlsx(project, output_xlsx: str) -> None:
     # Make headers bold
     for col in range(1, len(headers) + 1):
         cell = ws.cell(row=1, column=col)
-        cell.font = cell.font.copy(bold=True)
+        cell.font = Font(bold=True)
 
     # Populate data from Project instance
     for network in project.networks:
         ws.append(
             [
                 network.name,  # Direct attribute access
-                network.ipv4,  # instead of .get()
-                network.mask,
-                network.vlan,
+                network.address,  # instead of .get()
+                # network.vlan.id,
             ]
         )
 

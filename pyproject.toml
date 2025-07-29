@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "halter"
-version = "0.1.0"
+version = "0.1.1"
 description = "Мультиплатформенное приложение для управления сетевыми проектами"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -35,8 +35,6 @@ halter-cli = "cli.main:run"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["cli*", "core*", "gui*"]
-
 
 [tool.uv]
 # Зависимости для разработки и тестирования
@@ -45,6 +43,8 @@ dev-dependencies = [
   "pytest-cov>=6.1.1",
   "ruff>=0.12.2",
   "pre-commit",
+  "poethepoet>=0.36.0",
+  "mypy>=1.17.0",
 ]
 
 [tool.pytest.ini_options]
@@ -79,7 +79,6 @@ quote-style = "double"            # или 'single'
 indent-style = "space"            # можно 'tab'
 skip-magic-trailing-comma = false
 
-
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
@@ -99,3 +98,36 @@ copyright = "Copyright (C) 2025 by HK"
 [tool.flet.app]
 # Путь к исходному коду приложения
 path = "src/gui/"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+mypy_path = "src"
+show_error_codes = true
+warn_unused_configs = true
+ignore_missing_imports = true
+# Treat src as the source root (so src/core → core)
+explicit_package_bases = true
+package_root = ["src"]
+
+# You can also set source directories if needed
+sources = [
+  { module = "core", file = "src/core" },
+  { module = "cli", file = "src/cli" },
+]
+
+# Отключить для __init__.py, если нужно
+exclude = [
+  "src/gui_old/.*", # если хочешь исключить старый GUI
+  "src/gui/.*",
+  "^tests/.*$",
+]
+
+
+[tool.poe.tasks.test]
+help = "Run the test suite"
+cmd = "pytest --cov"
+
+[tool.poe.tasks.check]
+help = "Run the test suite"
+cmd = "mypy src"

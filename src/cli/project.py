@@ -30,7 +30,7 @@ if Path(DEFAULT_PATH).exists():
 else:
     project = Project(
         name="Default name",
-        description="Default description",
+        description="Description",
         area_type="Other",
         networks=[],
         devices=[],

@@ -3,6 +3,8 @@
 
 import ipaddress
 import re
+from collections.abc import Callable
+from typing import Any
 
 from core.models.address import AddressingType
 
@@ -67,8 +69,13 @@ def _validate_slaveid(addr: str) -> None:
         raise ValueError(f"Slave ID must be integer 0-247: {addr}")
 
 
+def _validate_crateid(addr: str) -> None:
+    if not (addr.isdigit() and 1 <= int(addr) <= 247):
+        raise ValueError(f"Crate ID must be integer 1-255: {addr}")
+
+
 # Словарь валидаторов
-VALIDATION_FUNCTIONS: dict[AddressingType, callable] = {
+VALIDATION_FUNCTIONS: dict[AddressingType, Callable[[str], Any]] = {
     AddressingType.ANALOG_SIGNAL: lambda a: _validate_with_pattern(
         a, *_validation_patterns[AddressingType.ANALOG_SIGNAL]
     ),
@@ -99,4 +106,5 @@ VALIDATION_FUNCTIONS: dict[AddressingType, callable] = {
         for p in ("server=", "host=", "data source=", "database=")
     )
     else (_ for _ in ()).throw(ValueError(f"Invalid DB connection: {a}")),
+    AddressingType.REGULBUS_CRATE_ADDRESS: _validate_crateid,
 }

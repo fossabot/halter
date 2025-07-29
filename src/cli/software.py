@@ -3,7 +3,7 @@ from rich import print
 from rich.table import Table
 
 from cli.project import project_ref
-from core.models.software import Port, Software
+from core.models.software import Direction, Port, Protocol, Software
 
 app = typer.Typer(help="Manage software entries in the active project")
 
@@ -105,9 +105,9 @@ def delete(name: str) -> None:
 @app.command("add-port")
 def add_port(
     software_name: str = typer.Argument(..., help="Название ПО в списке"),
-    direction: str = typer.Option(..., help="inbound или outbound"),
-    protocol: str = typer.Option(..., help="TCP или UDP"),
-    port: int = typer.Option(..., help="Номер порта"),
+    direction: Direction = typer.Option(..., help="inbound или outbound"),
+    protocol: Protocol = typer.Option(..., help="TCP или UDP"),
+    port_index: int = typer.Option(..., help="Номер порта"),
     description: str = typer.Option("", help="Описание"),
 ) -> None:
     project = project_ref.get("active")
@@ -116,16 +116,16 @@ def add_port(
         raise typer.Exit()
 
     try:
-        software: Software = project.software[software_name]
+        software = next(s for s in project.software if s.name == software_name)
         new_port = Port(
             direction=direction,
             protocol=protocol,
-            port=port,
+            index=port_index,
             description=description,
         )
         software.ports.append(new_port)
         typer.echo(
-            f"[green] Порт {protocol}:{port} добавлен в {software.name} [/green]"
+            f"[green] Порт {protocol}:{port_index} добавлен в {software.name} [/green]"
         )
     except ValueError as e:
         print(f"[red]Error:[/red] {e}")
@@ -144,10 +144,10 @@ def remove_port(
         raise typer.Exit()
 
     try:
-        software: Software = project.software[software_name]
+        software = next(s for s in project.software if s.name == software_name)
         removed = software.ports.pop(port_index)
         print(
-            f"[yellow] Удалён порт {removed.protocol}:{removed.port} из {software.name}[/yellow]"
+            f"[yellow] Удалён порт {removed.protocol}:{removed.index} из {software.name}[/yellow]"
         )
     except IndexError:
         print(f"[red]Неверный индекс порта {port_index}[/red]")
@@ -159,8 +159,8 @@ def edit_port(
     port_index: int = typer.Argument(
         ..., help="Индекс порта в software.ports"
     ),
-    direction: str = typer.Option(None),
-    protocol: str = typer.Option(None),
+    direction: Direction = typer.Option(None),
+    protocol: Protocol = typer.Option(None),
     port: int = typer.Option(None),
     description: str = typer.Option(None),
 ) -> None:
@@ -170,14 +170,14 @@ def edit_port(
         raise typer.Exit()
 
     try:
-        software: Software = project.software[software_name]
+        software = next(s for s in project.software if s.name == software_name)
         p = software.ports[port_index]
         if direction:
             p.direction = direction
         if protocol:
             p.protocol = protocol
         if port is not None:
-            p.port = port
+            p.index = port
         if description:
             p.description = description
         print(

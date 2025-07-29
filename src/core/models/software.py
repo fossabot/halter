@@ -5,7 +5,7 @@ NETWORK_PROTOCOLS: list[str] = ["TCP", "UDP", "ICMP"]
 NETWORK_DIRECTION: list[str] = ["inbound", "outbound", "io"]
 
 
-class Protocols(StrEnum):
+class Protocol(StrEnum):
     TCP = "TCP"
     UDP = "UDP"
     ICMP = "ICMP"
@@ -22,7 +22,7 @@ class Port:
     index: int
     description: str
     direction: Direction
-    protocol: Protocols
+    protocol: Protocol
 
     def __post_init__(self) -> None:
         if not (1 <= self.index <= 65535):

@@ -39,7 +39,7 @@ pip install uv hatch
 ### 2. Клонируйте репозиторий и установите зависимости
 
 ```bash
-git clone https://github.com/your-name/halter.git
+git clone https://github.com/herokrat/halter.git
 cd halter
 uv venv
 uv pip install .
@@ -52,13 +52,13 @@ uv pip install .
 ### CLI
 
 ```bash
-halter --help
+halter-cli --help
 ```
 
 Пример:
 
 ```bash
-halter add device --name "Router-1" --ip 10.0.0.1
+halter-cli add device --name "Router-1" --ip 10.0.0.1
 ```
 
 ### GUI
