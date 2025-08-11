@@ -11,6 +11,7 @@ app = typer.Typer(help="Manage networks in the active project")
 @app.command("add")
 def add(
     name: str = typer.Option(..., help="Network name"),
+    description: str = typer.Option(..., help="Network description"),
     topology: NetworkTopology = typer.Option(..., help="Network topology"),
     tier: NetworkTier = typer.Option(..., help="Network tier"),
     address_type: AddressingType = typer.Option(..., help="Addressing type"),
@@ -31,6 +32,7 @@ def add(
         vlan = VLAN(id=vlan_id, name=vlan_name)
         net = Network(
             name=name,
+            description=description,
             vlan=vlan,
             topology=topology,
             tier=tier,
@@ -84,6 +86,7 @@ def delete(name: str) -> None:
 @app.command("edit")
 def edit(
     name: str = typer.Argument(..., help="Network name to edit"),
+    description: str = typer.Option(None, help="New description"),
     address: str = typer.Option(None, help="New address"),
     address_type: AddressingType = typer.Option(None, help="New address type"),
     vlan_id: int = typer.Option(None, help="New VLAN ID"),
@@ -107,6 +110,8 @@ def edit(
                     net.update_address(
                         address, address_type or net.address_type
                     )
+                if description:
+                    net.description = description
                 if vlan_id and vlan_name:
                     net.vlan = VLAN(id=vlan_id, name=vlan_name)
                 if topology:
@@ -135,6 +140,7 @@ def show(name: str = typer.Argument(..., help="Network name to show")) -> None:
         if net.name == name:
             vlan = f"{net.vlan.id} ({net.vlan.name})" if net.vlan else "None"
             print(f"[cyan]Network: {net.name}[/cyan]")
+            print(f"  Description   : {net.description}")
             print(f"  Address       : {net.address}")
             print(f"  Address Type  : {net.address_type.value}")
             print(f"  VLAN          : {vlan}")

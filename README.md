@@ -33,7 +33,7 @@
 ### 1. Установите [uv](https://github.com/astral-sh/uv) и [hatch](https://hatch.pypa.io/)
 
 ```bash
-pip install uv hatch
+pip install uv
 ````
 
 ### 2. Клонируйте репозиторий и установите зависимости
@@ -42,8 +42,20 @@ pip install uv hatch
 git clone https://github.com/herokrat/halter.git
 cd halter
 uv venv
-uv pip install .
+uv sync
 ```
+
+### 3. Сборка
+
+`uv build`
+
+### 4. Установка в cli режиме
+
+```bash
+uv pip install "dist/halter-0.1.1-py3-none-any.whl[cli]"
+```
+
+Установка в cli режиме
 
 ---
 

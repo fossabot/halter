@@ -1,6 +1,6 @@
 # config_io.py
 """
-Версия, убирающая теги классов StrEnum/датаклассов в YAML
+Модуль для сохранения в yaml
 """
 
 from dataclasses import fields, is_dataclass
@@ -17,9 +17,8 @@ from core.models.network import VLAN, Network, NetworkTier, NetworkTopology
 from core.models.project import Project
 from core.models.software import Port, Software
 
+
 # Представитель для StrEnum: выводим просто строку
-
-
 def _enum_representer(dumper: Any, obj: Any) -> Any:
     return dumper.represent_scalar("tag:yaml.org,2002:str", obj.value)
 
@@ -58,22 +57,30 @@ def load_project(path: str) -> Project:
         raise ValueError("YAML root must be mapping with Project fields.")
 
     # Сети
-    nets = []
-    for n in data.get("networks", []):
-        n["topology"] = NetworkTopology(n["topology"])
-        n["tier"] = NetworkTier(n["tier"])
-        n["address_type"] = AddressingType(n["address_type"])
-        if n["vlan"] is not None:
-            n["vlan"] = VLAN(id=n["vlan"]["id"], name=n["vlan"]["name"])
-        nets.append(Network(**n))
+    try:
+        nets = []
+        for n in data.get("networks", []):
+            n["topology"] = NetworkTopology(n["topology"])
+            n["tier"] = NetworkTier(n["tier"])
+            n["address_type"] = AddressingType(n["address_type"])
+            if n["vlan"] is not None:
+                n["vlan"] = VLAN(id=n["vlan"]["id"], name=n["vlan"]["name"])
+            nets.append(Network(**n))
+    except Exception as e:
+        print(f"[red]Failed to load {n}: [/red] {e}")
 
     # Устройства
-    devs = []
-    for d in data.get("devices", []):
-        interfaces = [NetworkInterface(**i) for i in d.get("interfaces", [])]
-        params = {k: v for k, v in d.items() if k != "interfaces"}
-        params["interfaces"] = interfaces
-        devs.append(Device(**params))
+    try:
+        devs = []
+        for d in data.get("devices", []):
+            interfaces = [
+                NetworkInterface(**i) for i in d.get("interfaces", [])
+            ]
+            params = {k: v for k, v in d.items() if k != "interfaces"}
+            params["interfaces"] = interfaces
+            devs.append(Device(**params))
+    except Exception as e:
+        print(f"[red]Failed to load {d}: [/red] {e}")
 
     # ПО
     sws = []

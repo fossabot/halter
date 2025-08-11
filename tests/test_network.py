@@ -37,6 +37,7 @@ def base_network(base_vlan: VLAN) -> Network:
     """Create a valid Network instance using IPv4 network."""
     return Network(
         name="net1",
+        description="Test network",
         vlan=base_vlan,
         topology=NetworkTopology.BUS,
         tier=NetworkTier.TIER_2,
@@ -48,6 +49,7 @@ def base_network(base_vlan: VLAN) -> Network:
 def test_network_creation_with_valid_address(base_network: Network) -> None:
     """Network.__post_init__ should accept a valid address."""
     assert base_network.name == "net1"
+    assert base_network.description == "Test network"
     assert base_network.vlan == base_network.vlan
     assert base_network.topology == NetworkTopology.BUS
     assert base_network.tier == NetworkTier.TIER_2
@@ -60,6 +62,7 @@ def test_network_creation_with_invalid_address() -> None:
     with pytest.raises(ValueError):
         Network(
             name="badnet",
+            description="/etet12&2123%",
             vlan=None,
             topology=NetworkTopology.MESH,
             tier=NetworkTier.TIER_1,
@@ -78,6 +81,7 @@ def test_is_valid_address_false(base_vlan: VLAN) -> None:
     # Сначала создаём с валидным HTTP URL
     net = Network(
         name="t",
+        description="Test network",
         vlan=base_vlan,
         topology=NetworkTopology.PTP,
         tier=NetworkTier.TIER_0,

@@ -6,7 +6,6 @@ from rich import print
 from core.constants import DEFAULT_PATH
 from core.models.project import Project
 from core.services.config_io import load_project, save_project
-from core.services.export_to_xlnx import export_to_xlsx
 
 app = typer.Typer(help="Create, load and save projects")
 
@@ -31,7 +30,7 @@ else:
     project = Project(
         name="Default name",
         description="Description",
-        area_type="Other",
+        area_type=["Other"],
         networks=[],
         devices=[],
         software=[],
@@ -41,7 +40,7 @@ else:
 
 
 @app.command("create")
-def create(name: str, description: str, area_type: str) -> None:
+def create(name: str, description: str, area_type: list[str]) -> None:
     """Create a new project"""
     try:
         p = Project(name=name, description=description, area_type=area_type)
@@ -84,13 +83,3 @@ def load(
         print(f"[green]Project loaded from {path}[/green]")
     except Exception as e:
         print(f"[red]Failed to load:[/red] {e}")
-
-
-@app.command("export-netmap")
-def export_netmap(path: str = "network_ips.xlsx") -> None:
-    """Show project summary"""
-    p = project_ref.get("active")
-    if not p:
-        print("[red]No active project.[/red]")
-        raise typer.Exit()
-    export_to_xlsx(p, path)

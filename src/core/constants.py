@@ -1,5 +1,6 @@
 APP_NAME: str = "Halter"
-DEFAULT_PATH = "project.yaml"
+DEFAULT_PATH = r"project.yaml"
+DEFAULT_EXPORT_PATH = "D:/Etc/Source/halter/temp"
 
 PROJECT_CUSTOMER: list[str] = ["Transneft", "Other"]
 PROJECT_TYPES: list[str] = ["MNS", "SAR", "PT", "ASME", "PNS", "RP", "Other"]
@@ -23,6 +24,8 @@ DEVICE_ROLES: list[str] = [
     "DMZ",  # Сервер демилитаризованной зоны
     "PLC",
 ]
+
+DEVICE_OS: list[str] = ["Windows", "Linux"]
 
 DEVICE_BRANDS: list[str] = ["Moxa", "Zelax", "HP", "iROBO"]
 

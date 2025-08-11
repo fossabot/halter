@@ -44,6 +44,7 @@ def add(
         routes_str = typer.prompt("Routes (comma separated IPv4s)", default="")
         address_type = typer.prompt("Address type", default="IPv4 Address")
         vlan_mode = typer.prompt("Vlan mode", default="Access")
+        software_id = typer.prompt("Software id")
         route_list = [r.strip() for r in routes_str.split(",") if r.strip()]
         try:
             iface = NetworkInterface(
@@ -53,6 +54,7 @@ def add(
                 routes=route_list,
                 address_type=address_type,
                 vlan_mode=vlan_mode,
+                software_id=software_id,
             )
             interfaces_list.append(iface)
         except ValueError as e:

@@ -1,0 +1,6 @@
+site_name: Halter
+nav:
+  - Home: index.md
+  - About: about.md
+  - License: LICENSE.md
+theme: readthedocs

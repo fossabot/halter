@@ -18,13 +18,9 @@ class NetworkTier(StrEnum):
 class NetworkTopology(StrEnum):
     PTP = "Point-to-Point"
     BUS = "Bus"
-    D_BUS = "Duplicated Bus"
     STAR = "Star"
     RING = "Ring"
-    R_RING = "Redundant Ring"
     MESH = "Mesh"
-    FC_MESH = "Fully Connected Mesh"
-    PC_MESH = "Partially Connected Mesh"
     TREE = "Tree"
 
 
@@ -41,12 +37,13 @@ class VLAN:
 @dataclass(slots=True, kw_only=True)
 class Network:
     name: str
+    description: str
     vlan: VLAN | None = None
     topology: NetworkTopology
     tier: NetworkTier
     address_type: AddressingType
-    address: str | None = None
-    gateway: str | None = None
+    address: str = ""
+    gateway: str = ""
 
     def __post_init__(self) -> None:
         self._validate_address()
@@ -59,7 +56,7 @@ class Network:
     def update_address(
         self,
         new_address: str,
-        new_address_type: AddressingType | None = None,
+        new_address_type: AddressingType,
     ) -> None:
         old_type, old_addr = self.address_type, self.address
         try:

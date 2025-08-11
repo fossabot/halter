@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 
 NETWORK_PROTOCOLS: list[str] = ["TCP", "UDP", "ICMP"]
-NETWORK_DIRECTION: list[str] = ["inbound", "outbound", "io"]
+NETWORK_DIRECTION: list[str] = ["inbound", "outbound", "io", "both"]
 
 
 class Protocol(StrEnum):
@@ -15,6 +15,7 @@ class Direction(StrEnum):
     In = "inbound"
     Out = "outbound"
     IO = "io"
+    Both = "both"
 
 
 @dataclass(slots=True, kw_only=True)
@@ -29,12 +30,12 @@ class Port:
             raise ValueError(
                 f"Port number must be between 1 and 65535, got {self.index}."
             )
-        if self.direction not in {"inbound", "outbound", "io"}:
+        if self.direction not in NETWORK_DIRECTION:
             raise ValueError(
                 f"Invalid direction: {self.direction!r}. Must be 'inbound', 'outbound', or 'io'."
             )
 
-        if self.protocol not in {"TCP", "UDP"}:
+        if self.protocol not in NETWORK_PROTOCOLS:
             raise ValueError(
                 f"Invalid protocol: {self.protocol!r}. Must be 'TCP' or 'UDP'."
             )

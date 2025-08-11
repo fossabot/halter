@@ -1,4 +1,5 @@
 # tests/test_address_validation.py
+
 import pytest
 
 from core.models.address import AddressingType
@@ -34,7 +35,9 @@ from core.validation.address_validators import (
         ),
     ],
 )
-def test_pattern_validators(atype, valid, invalid):
+def test_pattern_validators(
+    atype: AddressingType, valid: list[str], invalid: list[str]
+) -> None:
     func = VALIDATION_FUNCTIONS[atype]
     for addr in valid:
         assert func(addr) is None
@@ -48,7 +51,7 @@ def test_pattern_validators(atype, valid, invalid):
     "addr,ok",
     [("0", True), ("247", True), ("-1", False), ("248", False), ("a", False)],
 )
-def test_modbus_slaveid(addr, ok):
+def test_modbus_slaveid(addr: str, ok: bool) -> None:
     func = VALIDATION_FUNCTIONS[AddressingType.MODBUS_RTU_ADDRESS]
     if ok:
         func(addr)
@@ -68,7 +71,7 @@ def test_modbus_slaveid(addr, ok):
         ("5-10", False),
     ],
 )
-def test_analog_signal(sig, ok):
+def test_analog_signal(sig: str, ok: bool) -> None:
     func = VALIDATION_FUNCTIONS[AddressingType.ANALOG_SIGNAL]
     if ok:
         func(sig)
@@ -87,7 +90,9 @@ def test_analog_signal(sig, ok):
         (AddressingType.IP_NETWORK, "300.0.0.0/24", True),
     ],
 )
-def test_ip_address_network(atype, addr, raises):
+def test_ip_address_network(
+    atype: AddressingType, addr: str, raises: bool
+) -> None:
     func = VALIDATION_FUNCTIONS[atype]
     if raises:
         with pytest.raises(ValueError):
@@ -105,7 +110,7 @@ def test_ip_address_network(atype, addr, raises):
         ("justtext", False),
     ],
 )
-def test_database_connection(conn, ok):
+def test_database_connection(conn: str, ok: bool) -> None:
     func = VALIDATION_FUNCTIONS[AddressingType.DATABASE_CONNECTION]
     if ok:
         func(conn)
@@ -115,7 +120,7 @@ def test_database_connection(conn, ok):
 
 
 # VLAN validation
-def test_vlan_id_bounds():
+def test_vlan_id_bounds() -> None:
     VLAN(id=1, name="A")
     VLAN(id=4094, name="B")
     for bad in [0, 4095, -1]:
@@ -125,9 +130,10 @@ def test_vlan_id_bounds():
 
 # Network class integration
 @pytest.fixture
-def base_network():
+def base_network() -> Network:
     return Network(
         name="net1",
+        description="Test network",
         vlan=VLAN(id=10, name="net"),
         topology=NetworkTopology.BUS,
         tier=NetworkTier.TIER_2,
@@ -136,14 +142,15 @@ def base_network():
     )
 
 
-def test_network_valid_address(base_network):
+def test_network_valid_address(base_network: Network) -> None:
     assert base_network.is_valid_address()
 
 
-def test_network_invalid_address_on_creation():
+def test_network_invalid_address_on_creation() -> None:
     with pytest.raises(ValueError):
         Network(
             name="bad",
+            description="a/sd/asdasd^((&*@!^#&$*$/123|123))",
             vlan=None,
             topology=NetworkTopology.MESH,
             tier=NetworkTier.TIER_1,
@@ -152,13 +159,13 @@ def test_network_invalid_address_on_creation():
         )
 
 
-def test_update_address_success(base_network):
+def test_update_address_success(base_network: Network) -> None:
     base_network.update_address("10.0.0.1", AddressingType.IP_ADDRESS)
     assert base_network.address == "10.0.0.1"
     assert base_network.address_type == AddressingType.IP_ADDRESS
 
 
-def test_update_address_failure_reverts(base_network):
+def test_update_address_failure_reverts(base_network: Network) -> None:
     old_addr, old_type = base_network.address, base_network.address_type
     with pytest.raises(ValueError):
         base_network.update_address("bad.addr", AddressingType.IP_ADDRESS)
@@ -167,7 +174,7 @@ def test_update_address_failure_reverts(base_network):
 
 
 # get_address_type_name
-def test_get_address_type_name(base_network):
+def test_get_address_type_name(base_network: Network) -> None:
     assert (
         base_network.get_address_type_name() == AddressingType.IP_NETWORK.value
     )

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "halter"
 version = "0.1.1"
-description = "Мультиплатформенное приложение для управления сетевыми проектами"
+description = "Приложение для управления сетевыми проектами"
 readme = "README.md"
 requires-python = ">=3.13"
 classifiers = [
@@ -15,15 +15,11 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 license = "MIT"
-license-files = ["LICEN[CS]E*"]
+license-files = ["docs/LICENSE.md"]
 authors = [{ name = "HK", email = "hk@example.com" }]
-dependencies = [
-  "typer>=0.12",
-  "flet>=0.11.0",
-  "PyYAML>=6.0.2",
-  "openpyxl>=3.1.5",
-]
+dependencies = ["PyYAML>=6.0.2", "openpyxl>=3.1.5"]
 optional-dependencies = { cli = ["typer>=0.16.0"], gui = ["flet>=0.28.2"] }
+
 
 [project.urls]
 Homepage = "https://github.com/herokrat/halter"
@@ -35,9 +31,9 @@ halter-cli = "cli.main:run"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+exclude = ["gui_old*"]
 
 [tool.uv]
-# Зависимости для разработки и тестирования
 dev-dependencies = [
   "pytest>=8.3.5",
   "pytest-cov>=6.1.1",
@@ -45,6 +41,9 @@ dev-dependencies = [
   "pre-commit",
   "poethepoet>=0.36.0",
   "mypy>=1.17.0",
+  "mkdocs>=1.6.1",
+  "types-PyYAML>=6.0.12",
+  "types-openpyxl>=3.1.5",
 ]
 
 [tool.pytest.ini_options]
@@ -87,7 +86,7 @@ halter-gui = "gui.main:run"
 
 [tool.flet]
 # Название организации в формате обратного домена (используется для bundle ID)
-org = "com.mycompany"
+org = "com.company"
 # Название продукта (отображается в заголовках, иконках и about-окне)
 product = "halter"
 # Название компании (отображается в about-окне)
@@ -105,29 +104,27 @@ strict = true
 mypy_path = "src"
 show_error_codes = true
 warn_unused_configs = true
-ignore_missing_imports = true
+ignore_missing_imports = false
 # Treat src as the source root (so src/core → core)
 explicit_package_bases = true
-package_root = ["src"]
-
-# You can also set source directories if needed
-sources = [
-  { module = "core", file = "src/core" },
-  { module = "cli", file = "src/cli" },
-]
-
-# Отключить для __init__.py, если нужно
 exclude = [
   "src/gui_old/.*", # если хочешь исключить старый GUI
   "src/gui/.*",
   "^tests/.*$",
 ]
 
-
 [tool.poe.tasks.test]
 help = "Run the test suite"
-cmd = "pytest --cov"
+cmd = "uv run pytest --cov"
 
 [tool.poe.tasks.check]
-help = "Run the test suite"
-cmd = "mypy src"
+help = "Run the type checking"
+cmd = "uv run mypy src"
+
+[tool.poe.tasks.docs]
+help = "Run mkdocs build"
+cmd = "uv run mkdocs build"
+
+[tool.poe.tasks.docs-test]
+help = "Run mkdocs server to test docs"
+cmd = "uv run mkdocs serve"

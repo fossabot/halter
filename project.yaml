@@ -1,82 +1,426 @@
-name: OfficeNet
-description: Test
-area_type: MNS
+name: Krasnoselki-2
+description: Автоматизированная система управления технологическим процессом НПС Красносёлки-2 (СА МНС, СА ПТ, САР). Куйбышевское РУ. Техническое перевооружение.
+area_type: MNS, PT, ASME
 networks:
-- name: USOMNS1-P
+- name: USOMNS2-P
+  description: Сеть СУ МПСА МНС НПС№2 (Основной канал)
   vlan: null
   topology: Ring
   tier: I/O and Distributed Controllers
   address_type: RegulBus Crate Address
-  address: null
-  gateway: null
-- name: USOMNS1-S
+  address:
+  gateway:
+- name: USOMNS2-S
+  description: Сеть СУ МПСА МНС НПС№2 (Резервный канал)
   vlan: null
   topology: Ring
   tier: I/O and Distributed Controllers
   address_type: RegulBus Crate Address
-  address: null
-  gateway: null
-- name: SUMNS1-P
+  address:
+  gateway:
+- name: PLCMNS2-P
+  description: Сеть синхронизации ПЛК МПСА МНС НПС№2 (Основной канал)
   vlan: null
   topology: Point-to-Point
   tier: Controllers
   address_type: IPv4 Network
   address: 192.168.98.0/24
-  gateway: null
-- name: SUMNS1-S
+  gateway: ""
+- name: PLCMNS2-S
+  description: Сеть синхронизации ПЛК МПСА МНС НПС№2 (Резервный канал)
   vlan: null
   topology: Point-to-Point
   tier: Controllers
   address_type: IPv4 Network
   address: 192.168.99.0/24
-  gateway: null
-- name: VUMNS1-P
+  gateway: ""
+- name: VUMNS2-P
+  description: Сеть ВУ МПСА МНС НПС№1 (Основной канал)
   vlan:
-    id: 1111
-    name: MNS1-P
+    id: 1121
+    name: MNS2-P
   topology: Star
   tier: SCADA and HMI
   address_type: IPv4 Network
-  address: 192.168.201.0/28
-  gateway: 192.168.201.3
-- name: VUMNS1-S
+  address: 192.168.202.0/28
+  gateway: 192.168.202.3
+- name: VUMNS2-S
+  description: Сеть ВУ МПСА МНС НПС№1 (Резервный канал)
   vlan:
-    id: 2111
-    name: MNS1-S
+    id: 2121
+    name: MNS2-S
   topology: Star
   tier: SCADA and HMI
   address_type: IPv4 Network
-  address: 192.168.201.128/28
-  gateway: 192.168.201.131
+  address: 192.168.202.128/28
+  gateway: 192.168.202.131
+- name: ARMMNS2-P
+  description: Сеть АРМ МПСА МНС НПС№1 (Основной канал)
+  vlan:
+    id: 1122
+    name: ARM2-P
+  topology: Star
+  tier: SCADA and HMI
+  address_type: IPv4 Network
+  address: 192.168.202.16/28
+  gateway: 192.168.202.18
+- name: ARMMNS2-S
+  description: Сеть АРМ МПСА МНС НПС№1 (Основной канал)
+  vlan:
+    id: 2122
+    name: ARM2-S
+  topology: Star
+  tier: SCADA and HMI
+  address_type: IPv4 Network
+  address: 192.168.202.144/28
+  gateway: 192.168.202.146
+- name: L3-P
+  description: Сеть коммутатора L3 ЛВС МДП (Основной канал)
+  vlan: null
+  topology: Star
+  tier: MES Level
+  address_type: IPv4 Network
+  address: 172.16.0.0/24
+  gateway: 172.16.0.1
+- name: L3-S
+  description: Сеть коммутатора L3 ЛВС МДП (Резервный канал)
+  vlan: null
+  topology: Star
+  tier: MES Level
+  address_type: IPv4 Network
+  address: 172.16.1.0/24
+  gateway: 172.16.1.1
+- name: RT-P
+  description: Сеть маршрутизатора ЛВС МДП внутреняя (Основной канал)
+  vlan: null
+  topology: Star
+  tier: MES Level
+  address_type: IPv4 Network
+  address: 172.16.2.0/24
+  gateway: 172.16.2.1
+- name: RT-S
+  description: Сеть маршрутизатора ЛВС МДП внутреняя (Резервный канал)
+  vlan: null
+  topology: Star
+  tier: MES Level
+  address_type: IPv4 Network
+  address: 172.16.3.0/24
+  gateway: 172.16.3.1
 devices:
-- name: PLCMNS-CK-EX-P
+- name: PLCMNS-CK-KS2-P
   description: PLC Primary (A)
   model: REGUL R500
+  area_type: MNS
   role: PLC
   interfaces:
   - name: eth3
-    network_id: VLAN10_Network
+    network_id: PLCMNS2-P
     routes: []
     address_type: IPv4 Address
-    address: 192.168.10.101
+    address: 192.168.98.1
     vlan_mode: Access
+    software_id: regul_networking
   - name: eth4
-    network_id: VLAN20_Field
+    network_id: PLCMNS2-S
     routes: []
     address_type: IPv4 Address
-    address: 10.0.0.10
+    address: 192.168.99.1
     vlan_mode: Access
-- name: HMI-Station
-  description: HMI Station
-  model: Wonderware InTouch
+    software_id: regul_networking
+  - name: eth5
+    network_id: VUMNS2-P
+    routes:
+      - ARMMNS2-P
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.1
+    vlan_mode: Access
+    software_id: regul_networking
+  - name: eth6
+    network_id: VUMNS2-S
+    routes:
+      - ARMMNS2-S
+      - L3-S
+      - RT-S
+    address_type: IPv4 Address
+    address: 192.168.202.129
+    vlan_mode: Access
+    software_id: regul_networking
+  software_used:
+    - NTP Client
+    - Modbus TCP
+  firewall_id: regul_firewall
+- name: PLCMNS-CK-KS2-S
+  description: PLC Secondary (B)
+  model: REGUL R500
+  role: PLC
+  area_type: MNS
+  interfaces:
+  - name: eth3
+    network_id: PLCMNS2-P
+    routes: []
+    address_type: IPv4 Address
+    address: 192.168.98.2
+    vlan_mode: Access
+    software_id: regul_networking
+  - name: eth4
+    network_id: PLCMNS2-S
+    routes: []
+    address_type: IPv4 Address
+    address: 192.168.99.2
+    vlan_mode: Access
+    software_id: regul_networking
+  - name: eth5
+    network_id: VUMNS2-P
+    routes:
+      - ARMMNS2-P
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.2
+    vlan_mode: Access
+    software_id: regul_networking
+  - name: eth6
+    network_id: VUMNS2-S
+    routes:
+      - ARMMNS2-S
+      - L3-S
+      - RT-S
+    address_type: IPv4 Address
+    address: 192.168.202.130
+    vlan_mode: Access
+    software_id: regul_networking
+  software_used:
+    - NTP Client
+    - Modbus TCP
+  firewall_id: regul_firewall
+- name: AMNS-CK-KS2-S
+  description: АРМ Оператора "Красноселки-2" (Резервное)
+  model: IROBO
   role: Workstation
+  area_type: MNS
+  interfaces:
+  - name: eth4
+    network_id: VUMNS2-P
+    routes:
+      - ARMMNS2-P
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.4
+    vlan_mode: Access
+    software_id: networking
+  - name: eth0
+    network_id: VUMNS2-S
+    routes:
+      - ARMMNS2-S
+      - L3-S
+      - RT-S
+    address_type: IPv4 Address
+    address: 192.168.202.132
+    vlan_mode: Access
+    software_id: networking
+  software_used:
+      - Alpha.Server
+      - Alpha.Domain
+      - Alpha.Secondary
+      - Alpha.DevStudio
+      - Alpha.HMI
+      - Alpha.Historian
+      - Alpha.Licensing
+      - NTP Client
+      - KLAgent
+      - SSH
+  firewall_id: iptables
+- name: AMNS-SR-KS2-P
+  description: АРМ Оператора "Красноселки-2" (Основное)
+  model: IROBO
+  role: Workstation
+  area_type: MNS
+  interfaces:
+  - name: eth4
+    network_id: ARMMNS2-P
+    routes:
+      - VUMNS2-P
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.17
+    vlan_mode: Access
+    software_id: networking
+  - name: eth0
+    network_id: ARMMNS2-S
+    routes:
+      - VUMNS2-S
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.145
+    vlan_mode: Access
+    software_id: networking
+  software_used:
+    - Alpha.Server
+    - Alpha.Domain
+    - Alpha.Secondary
+    - Alpha.DevStudio
+    - Alpha.HMI
+    - Alpha.Historian
+    - Alpha.Licensing
+    - NTP Client
+    - KLAgent
+    - SSH
+  firewall_id: iptables
+- name: NTP-SR-KS2
+  description: Сервер точного времени
+  model: Virtual
+  role: Timeserver
+  area_type: MNS, PT, ASME
   interfaces:
   - name: eth0
-    network_id: VLAN10_Network
-    routes: []
+    network_id: L3-P
+    routes:
+      - VUMNS2-P
+      - ARMMNS2-P
+      - RT-P
     address_type: IPv4 Address
-    address: 192.168.10.150
+    address: 172.16.0.6
     vlan_mode: Access
+    software_id: networking
+  - name: eth1
+    network_id: L3-S
+    routes:
+      - VUMNS2-S
+      - ARMMNS2-S
+      - RT-S
+    address_type: IPv4 Address
+    address: 172.16.1.6
+    vlan_mode: Access
+    software_id: networking
+  software_used:
+    - NTP Server
+- name: PPCMNS-SARD-KS2
+  description: Дисплейная панель "Красноселки-2"
+  model: IROBO
+  role: Panel
+  area_type: MNS
+  interfaces:
+  - name: eth0
+    network_id: VUMNS2-P
+    routes:
+      - ARMMNS2-P
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.11
+    vlan_mode: Access
+    software_id: networking
+  - name: eth1
+    network_id: VUMNS2-S
+    routes:
+      - ARMMNS2-S
+      - L3-S
+      - RT-S
+    address_type: IPv4 Address
+    address: 192.168.202.139
+    vlan_mode: Access
+    software_id: networking
+  software_used:
+    - Alpha.Server
+    - Alpha.Domain
+    - Alpha.Secondary
+    - Alpha.DevStudio
+    - Alpha.HMI
+    - Alpha.Historian
+    - Alpha.Licensing
+    - NTP Client
+    - KLAgent
+    - SSH
+  firewall_id: iptables
+- name: SWMNS-CK-KS2-P
+  description: Коммутатор ВУ МНС НПС №1 "Красноселки-2" (Основной)
+  model: Moxa
+  role: Switch
+  area_type: MNS
+  interfaces:
+  - name: main
+    network_id: VUMNS2-P
+    routes:
+      - ARMMNS2-P
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.9
+    vlan_mode: Access
+    software_id: moxa_networking
+  software_used:
+    - NTP Client
+    - SNMP
+    - SSH
+  firewall_id: moxa_firewall
+- name: SWMNS-CK-KS2-S
+  description: Коммутатор ВУ МНС НПС №1 "Красноселки-2" (Резервный)
+  model: Moxa
+  role: Switch
+  area_type: MNS
+  interfaces:
+  - name: main
+    network_id: VUMNS2-S
+    routes:
+      - ARMMNS2-S
+      - L3-S
+      - RT-S
+    address_type: IPv4 Address
+    address: 192.168.202.137
+    vlan_mode: Access
+    software_id: moxa_networking
+  software_used:
+    - NTP Client
+    - SNMP
+    - SSH
+  firewall_id: moxa_firewall
+- name: SWMNS-SARD-KS2-P
+  description: Коммутатор ВУ САРД НПС №1 "Красноселки-2" (Основной)
+  model: Moxa
+  role: Switch
+  area_type: MNS
+  interfaces:
+  - name: main
+    network_id: VUMNS2-P
+    routes:
+      - ARMMNS2-P
+      - L3-P
+      - RT-P
+    address_type: IPv4 Address
+    address: 192.168.202.10
+    vlan_mode: Access
+    software_id: moxa_networking
+  software_used:
+    - NTP Client
+    - SNMP
+    - SSH
+  firewall_id: moxa_firewall
+- name: SWMNS-SARD-KS2-S
+  description: Коммутатор ВУ САРД НПС №1 "Красноселки-2" (Резервный)
+  model: Moxa
+  role: Switch
+  area_type: MNS
+  interfaces:
+  - name: main
+    network_id: VUMNS2-S
+    routes:
+      - ARMMNS2-S
+      - L3-S
+      - RT-S
+    address_type: IPv4 Address
+    address: 192.168.202.138
+    vlan_mode: Access
+    software_id: moxa_networking
+  software_used:
+    - NTP Client
+    - SNMP
+    - SSH
+  firewall_id: moxa_firewall
 software:
 - name: Alpha.Server
   description: Alpha.Server
@@ -84,71 +428,43 @@ software:
   ports:
   - index: 4572
     description: Для приложений Статистика, Конфигуратор, Управляющий
-    direction: outbound
+    direction: both
     protocol: TCP
   - index: 3388
     description: Предоставление статистики в Alpha.Historian
-    direction: outbound
+    direction: both
     protocol: TCP
   - index: 4949
     description: Сохранение данных в Alpha.Historian
-    direction: outbound
+    direction: both
     protocol: TCP
   - index: 4388
     description: Модуль TCP Server - предоставление данных клиентам
-    direction: outbound
+    direction: both
     protocol: TCP
   - index: 161
     description: Модуль SNMP Manager - опрос агента
-    direction: outbound
+    direction: both
     protocol: UDP
   - index: 162
     description: Модуль SNMP Manager - trap-уведомления
-    direction: outbound
+    direction: both
     protocol: UDP
   - index: 6551
-    description: Модуль резервирования - порт основного канала для подключения к резервной
-      паре
-    direction: outbound
+    description: Модуль резервирования - порт основного канала для подключения к резервной паре
+    direction: both
     protocol: TCP
   - index: 6552
-    description: Модуль резервирования - порт резервного канала для подключения к
-      резервной паре
-    direction: outbound
+    description: Модуль резервирования - порт резервного канала для подключения к резервной паре
+    direction: both
     protocol: TCP
   - index: 8080
     description: Модуль OPC UA Client - порт HTTP/HTTPS протокола
-    direction: outbound
+    direction: both
     protocol: TCP
   - index: 10502
     description: Модуль Modbus TCP Master -опрос подчиненной станцией
-    direction: outbound
-    protocol: TCP
-  - index: 4572
-    description: Для приложений Статистика, Конфигуратор, Управляющий
-    direction: inbound
-    protocol: TCP
-  - index: 4388
-    description: Модуль TCP Server - подключение клиентов
-    direction: inbound
-    protocol: TCP
-  - index: 6551
-    description: Модуль резервирования - порт основного канала для подключения к резервной
-      паре
-    direction: inbound
-    protocol: TCP
-  - index: 6552
-    description: Модуль резервирования - порт резервного канала для подключения к
-      резервной паре
-    direction: inbound
-    protocol: TCP
-  - index: 8080
-    description: Модуль OPC UA Client - порт HTTP/HTTPS протокола
-    direction: inbound
-    protocol: TCP
-  - index: 10502
-    description: Модуль Modbus TCP Master -опрос подчиненной станцией
-    direction: inbound
+    direction: both
     protocol: TCP
 - name: Alpha.AccessPoint
   description: Alpha.Server
@@ -172,31 +488,19 @@ software:
   ports:
   - index: 11010
     description: Alpha.Domain.Agent
-    direction: outbound
+    direction: both
     protocol: TCP
   - index: 11020
     description: Alpha.Net.Agent
-    direction: outbound
-    protocol: TCP
-  - index: 11010
-    description: Alpha.Domain.Agent
-    direction: inbound
-    protocol: TCP
-  - index: 11020
-    description: Alpha.Net.Agent
-    direction: inbound
+    direction: both
     protocol: TCP
 - name: Alpha.Security
   description: Alpha.Server
   version: v1.0
   ports:
   - index: 389
-    description: Конфигуратор, Агент
-    direction: outbound
-    protocol: TCP
-  - index: 389
-    description: LDAP-сервер - запросы данных пользователей, их прав, конфигурирование
-    direction: inbound
+    description: Конфигуратор, Агент, LDAP-сервер - запросы данных пользователей, их прав, конфигурирование
+    direction: both
     protocol: TCP
 - name: Alpha.DevStudio
   description: Alpha.Server
@@ -246,3 +550,75 @@ software:
     description: Подключение приложения Статистика
     direction: inbound
     protocol: TCP
+- name: networking
+  description: Raise network interfaces
+  version: v1.134
+- name: regul_networking
+  description: Implementation of network in REGUL
+  version: v1.0
+- name: Modbus TCP
+  description: Modbus TCP
+  version:
+  ports:
+  - index: 10502
+    description: Modbus TCP
+    direction: outbound
+    protocol: TCP
+- name: NTP Client
+  description: Протокол синхронизации времени
+  version: v1.0
+  ports:
+  - index: 123
+    description: NTP
+    direction: outbound
+    protocol: UDP
+- name: NTP Server
+  description: Протокол синхронизации времени
+  version: v1.0
+  ports:
+  - index: 123
+    description: NTP
+    direction: inbound
+    protocol: UDP
+- name: SNMP
+  description: Протокол простого управления сетями
+  version: v1.0
+  ports:
+  - index: 161
+    description: Данные
+    direction: both
+    protocol: UDP
+  - index: 162
+    description: Ловушки
+    direction: both
+    protocol: UDP
+- name: KLAgent
+  description: Kaspersky Agent
+  version: v1.5
+  ports:
+  - index: 14000
+    description: Данные
+    direction: both
+    protocol: TCP
+  - index: 13000
+    description: Ловушки
+    direction: both
+    protocol: TCP
+  - index: 15000
+    description: Ловушки
+    direction: both
+    protocol: TCP
+- name: SSH
+  description: Secured Socket Shell
+  version: v2.0
+  ports:
+  - index: 22
+    description: Данные
+    direction: both
+    protocol: TCP
+- name: moxa_networking
+  description: Raise network interfaces for Moxa switches
+  version: v1.0
+- name: moxa_firewall
+  description: Implementation of firewall in Moxa Switches
+  version: v1.0

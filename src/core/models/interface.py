@@ -19,6 +19,7 @@ class NetworkInterface:
     address_type: AddressingType
     address: str
     vlan_mode: VlanMode
+    software_id: str
 
     def __post_init__(self) -> None:
         self._validate_address()

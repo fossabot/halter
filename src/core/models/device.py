@@ -12,6 +12,9 @@ class Device:
     model: str
     role: str
     interfaces: list[NetworkInterface] = field(default_factory=list)
+    software_used: list[str] = field(default_factory=list)
+    firewall_id: str | None = None
+    area_type: list[str] | None = None
 
     def __post_init__(self) -> None:
         validate_netbios_name(self.name)

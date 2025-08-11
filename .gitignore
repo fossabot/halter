@@ -170,3 +170,4 @@ msixconfig.json
 *gui_old/
 *.egg-info/
 /src/gui_old/
+temp/
