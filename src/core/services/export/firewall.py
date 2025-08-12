@@ -15,7 +15,7 @@ from core.models.firewall import (
     RuleAction,
 )
 from core.models.project import Project
-from core.models.software import Port, Software
+from core.models.software import NETWORK_DIRECTION, Direction, Port, Software
 
 
 def generate_firewall_config_for_device(
@@ -33,10 +33,12 @@ def generate_firewall_config_for_device(
     rules.extend(_generate_security_rules())
 
     # Получаем порты текущего устройства
-    current_ports: list[Port] = []
-    for software_name in current_device.software_used:
-        if software := software_map.get(software_name):
-            current_ports.extend(software.ports)
+    current_ports: list[Port] = [
+        port
+        for software_name in current_device.software_used
+        if (software := software_map.get(software_name))
+        for port in software.ports
+    ]
 
     # Проверяем устройства на совпадение портов
     for other_device in devices:
@@ -44,16 +46,16 @@ def generate_firewall_config_for_device(
             continue
 
         # Получаем порты другого устройства
-        other_ports: list[Port] = []
-        for software_name in other_device.software_used:
-            if software := software_map.get(software_name):
-                other_ports.extend(software.ports)
+        other_ports: list[Port] = [
+            port
+            for software_name in other_device.software_used
+            if (software := software_map.get(software_name))
+            for port in software.ports
+        ]
 
         # Проверяем совпадение портов по индексу (номеру порта)
         current_set = set(port.index for port in current_ports)
-        # print(f"{current_device.name}: Ports: {current_set}")
         other_set = set(port.index for port in other_ports)
-        # print(f"{other_device.name}: Ports: {other_set}")
         common_port_indices = current_set & other_set
 
         if not common_port_indices:
@@ -66,21 +68,15 @@ def generate_firewall_config_for_device(
                     current_interface.network_id == other_interface.network_id
                     or current_interface.network_id in other_interface.routes
                 ):
-                    # Генерируем правила для софта с совпадающими портами
-                    for software_name in current_device.software_used:
-                        if software := software_map.get(software_name):
-                            # Проверяем, есть ли порты этого софта с общими индексами
-                            if any(
-                                port.index in common_port_indices
-                                for port in software.ports
-                            ):
-                                rules.extend(
-                                    _generate_software_rules(
-                                        software,
-                                        other_interface.address,
-                                        common_port_indices,
-                                    )
-                                )
+                    # Генерируем правила для совпадающих портов с правильными направлениями
+                    rules.extend(
+                        _generate_software_rules(
+                            current_ports,
+                            other_ports,
+                            other_interface.address,
+                            common_port_indices,
+                        )
+                    )
                     break  # Один раз для каждой сети
 
     rules.extend(_generate_final_rules())
@@ -92,10 +88,170 @@ def generate_firewall_config_for_device(
     )
 
 
-def _genereate_rules(
-    current_sw: list[Software],
+def _generate_software_rules(
+    current_ports: list[Port],
+    other_ports: list[Port],
+    other_address: str,
+    common_port_indices: set[int],
 ) -> list[FirewallRule]:
-    return []
+    """Генерирует правила фаервола для портов с совпадающими индексами и направлениями"""
+
+    rules: list[FirewallRule] = []
+
+    # Создаем словари для быстрого поиска портов по индексу
+    current_ports_by_index = create_unique_ports_with_right_direction(
+        current_ports
+    )
+    other_ports_by_index = create_unique_ports_with_right_direction(
+        other_ports
+    )
+
+    # Группируем порты по направлению и протоколу для текущего устройства
+    inbound_tcp_ports: list[int] = []
+    inbound_udp_ports: list[int] = []
+    outbound_tcp_ports: list[int] = []
+    outbound_udp_ports: list[int] = []
+
+    try:
+        for index in common_port_indices:
+            current_port: Port = current_ports_by_index[index]
+            other_port: Port = other_ports_by_index[index]
+
+            # Проверяем совместимость направлений
+            if _are_directions_compatible(
+                current_port.direction, other_port.direction
+            ):
+                # if index == 161:
+                #     print(
+                #         f"{index} {current_port.direction} {other_port.direction}"
+                #     )
+                # Определяем реальное направление для текущего устройства
+                actual_direction = _get_actual_direction(
+                    current_port.direction, other_port.direction
+                )
+                if (
+                    actual_direction == "both"
+                    and current_port.protocol == "TCP"
+                ):
+                    inbound_tcp_ports.append(index)
+                    outbound_tcp_ports.append(index)
+                elif (
+                    actual_direction == "both"
+                    and current_port.protocol == "UDP"
+                ):
+                    inbound_udp_ports.append(index)
+                    outbound_udp_ports.append(index)
+                elif (
+                    actual_direction == "inbound"
+                    and current_port.protocol == "TCP"
+                ):
+                    inbound_tcp_ports.append(index)
+                elif (
+                    actual_direction == "inbound"
+                    and current_port.protocol == "UDP"
+                ):
+                    inbound_udp_ports.append(index)
+                elif (
+                    actual_direction == "outbound"
+                    and current_port.protocol == "TCP"
+                ):
+                    outbound_tcp_ports.append(index)
+                elif (
+                    actual_direction == "outbound"
+                    and current_port.protocol == "UDP"
+                ):
+                    outbound_udp_ports.append(index)
+    except Exception as e:
+        print(f"[red]Failed! Port index is {index} [/red] {e}")
+
+    # Функция для создания мультипорт правил с учетом лимита в 15 портов
+    def create_multiport_rules(
+        chain: Chain, ports: list[int], protocol: str
+    ) -> list[FirewallRule]:
+        multiport_rules = []
+        # Разбиваем на группы по 15 портов
+        # print(f"{len(ports)}")
+        for i in range(0, len(ports), 15):
+            port_group = ports[i : i + 15]
+            if chain == Chain.INPUT:
+                multiport_rules.append(
+                    FirewallRule(
+                        chain=chain,
+                        action=RuleAction.ACCEPT,
+                        protocol=protocol,
+                        destination_ports=port_group,
+                        source=other_address,
+                    )
+                )
+            else:
+                multiport_rules.append(
+                    FirewallRule(
+                        chain=chain,
+                        action=RuleAction.ACCEPT,
+                        protocol=protocol,
+                        source_ports=port_group,
+                        destination=other_address,
+                    )
+                )
+        return multiport_rules
+
+    # Создаем правила для TCP портов
+    if inbound_tcp_ports:
+        rules.extend(
+            create_multiport_rules(
+                Chain.INPUT, sorted(inbound_tcp_ports), "tcp"
+            )
+        )
+
+    # Создаем правила для UDP портов
+    if inbound_udp_ports:
+        rules.extend(
+            create_multiport_rules(
+                Chain.INPUT, sorted(inbound_udp_ports), "udp"
+            )
+        )
+
+    if outbound_tcp_ports:
+        rules.extend(
+            create_multiport_rules(
+                Chain.OUTPUT, sorted(outbound_tcp_ports), "tcp"
+            )
+        )
+    if outbound_udp_ports:
+        rules.extend(
+            create_multiport_rules(
+                Chain.OUTPUT, sorted(outbound_udp_ports), "udp"
+            )
+        )
+
+    return rules
+
+
+def _are_directions_compatible(dir1: Direction, dir2: Direction) -> bool:
+    """Проверяет совместимость направлений для соединения двух устройств.
+
+    Args:
+        dir1: Направление первого устройства
+        dir2: Направление второго устройства
+
+    Returns:
+        True - если направления совместимы (может быть установлено соединение)
+        False - если направления несовместимы (соединение невозможно)
+
+    Правила:
+        - Both совместим с любым направлением (In, Out, Both)
+        - In совместим только с Out или Both
+        - Out совместим только с In или Both
+        - In+In и Out+Out - несовместимые комбинации
+    """
+    # Обрабатываем случай, когда хотя бы одно устройство работает в обоих направлениях
+    if Direction.Both in (dir1, dir2):
+        return True
+
+    # Проверяем взаимно совместимые комбинации
+    return (dir1 == Direction.In and dir2 == Direction.Out) or (
+        dir1 == Direction.Out and dir2 == Direction.In
+    )
 
 
 def _generate_final_rules() -> list[FirewallRule]:
@@ -220,108 +376,6 @@ def _generate_security_rules() -> list[FirewallRule]:
             ),
         ]
     )
-
-    return rules
-
-
-def _generate_software_rules(
-    software: Software, ip_address: str, common_port_indices: set[int]
-) -> list[FirewallRule]:
-    """Генерирует правила для конкретного ПО с использованием мультипорт"""
-    rules: list[FirewallRule] = []
-
-    # Группируем порты по направлению и протоколу
-    inbound_tcp_ports: list[int] = []
-    inbound_udp_ports: list[int] = []
-    outbound_tcp_ports: list[int] = []
-    outbound_udp_ports: list[int] = []
-    both_tcp_ports: list[int] = []
-    both_udp_ports: list[int] = []
-
-    for port in software.ports:
-        if port.index in common_port_indices:
-            if port.protocol.lower() == "tcp":
-                if port.direction == "both":
-                    both_tcp_ports.append(port.index)
-                elif port.direction == "inbound":
-                    inbound_tcp_ports.append(port.index)
-                elif port.direction == "outbound":
-                    outbound_tcp_ports.append(port.index)
-            elif port.protocol.lower() == "udp":
-                if port.direction == "both":
-                    both_udp_ports.append(port.index)
-                elif port.direction == "inbound":
-                    inbound_udp_ports.append(port.index)
-                elif port.direction == "outbound":
-                    outbound_udp_ports.append(port.index)
-
-    # Функция для создания мультипорт правил с учетом лимита в 15 портов
-    def create_multiport_rules(
-        chain: Chain, ports: list[int], protocol: str
-    ) -> list[FirewallRule]:
-        multiport_rules = []
-        # Разбиваем на группы по 15 портов
-        for i in range(0, len(ports), 15):
-            port_group = ports[i : i + 15]
-            if chain == Chain.INPUT:
-                multiport_rules.append(
-                    FirewallRule(
-                        chain=chain,
-                        action=RuleAction.ACCEPT,
-                        protocol=protocol,
-                        destination_ports=port_group,
-                        source=ip_address,
-                    )
-                )
-            else:
-                multiport_rules.append(
-                    FirewallRule(
-                        chain=chain,
-                        action=RuleAction.ACCEPT,
-                        protocol=protocol,
-                        source_ports=port_group,
-                        destination=ip_address,
-                    )
-                )
-        return multiport_rules
-
-    # Создаем правила для TCP портов
-    if inbound_tcp_ports:
-        rules.extend(
-            create_multiport_rules(Chain.INPUT, inbound_tcp_ports, "tcp")
-        )
-
-    if outbound_tcp_ports:
-        rules.extend(
-            create_multiport_rules(Chain.OUTPUT, outbound_tcp_ports, "tcp")
-        )
-
-    if both_tcp_ports:
-        rules.extend(
-            create_multiport_rules(Chain.INPUT, both_tcp_ports, "tcp")
-        )
-        rules.extend(
-            create_multiport_rules(Chain.OUTPUT, both_tcp_ports, "tcp")
-        )
-
-    # Создаем правила для UDP портов
-    if inbound_udp_ports:
-        rules.extend(
-            create_multiport_rules(Chain.INPUT, inbound_udp_ports, "udp")
-        )
-
-    if outbound_udp_ports:
-        rules.extend(
-            create_multiport_rules(Chain.OUTPUT, outbound_udp_ports, "udp")
-        )
-
-    if both_udp_ports:
-        rules.extend(
-            create_multiport_rules(Chain.INPUT, both_udp_ports, "udp")
-        )
-        rules.extend(
-            create_multiport_rules(Chain.OUTPUT, both_udp_ports, "udp")
-        )
 
     return rules
 
@@ -478,3 +532,85 @@ def _generate_rule(rule: FirewallRule) -> str:
 
 def ports_to_multi_or_single(ports: list[int]) -> str:
     return ", ".join(map(str, ports))
+
+
+def _get_actual_direction(
+    current_direction: Direction, other_direction: Direction
+) -> NETWORK_DIRECTION:
+    """Определяет реальное направление трафика для текущего устройства с учетом направления другого устройства.
+
+    Использует pattern matching (PEP 634) и Literal типы для лучшей типобезопасности.
+
+    Args:
+        current_direction: Направление текущего устройства
+        other_direction: Направление другого устройства
+
+    Returns:
+        "inbound" - для входящего трафика
+        "outbound" - для исходящего трафика
+        "both" - для обоих направлений
+
+    Raises:
+        ValueError: При несовместимых направлениях (In+In или Out+Out)
+    """
+    match (current_direction, other_direction):
+        # Оба устройства работают в двух направлениях
+        case (Direction.Both, Direction.Both):
+            return "both"
+
+        # Текущее устройство - Both
+        case (Direction.Both, Direction.In):
+            return "outbound"
+        case (Direction.Both, Direction.Out):
+            return "inbound"
+
+        # Другое устройство - Both
+        case (Direction.In, Direction.Both):
+            return "inbound"
+        case (Direction.Out, Direction.Both):
+            return "outbound"
+
+        # Стандартные совместимые случаи
+        case (Direction.In, Direction.Out):
+            return "inbound"
+        case (Direction.Out, Direction.In):
+            return "outbound"
+
+        # Некорректные комбинации
+        case (Direction.In, Direction.In):
+            raise ValueError("Incompatible directions: In+In")
+        case (Direction.Out, Direction.Out):
+            raise ValueError("Incompatible directions: Out+Out")
+
+        # Все остальные случаи (для полноты)
+        case _:
+            return "both"
+
+
+def create_unique_ports_with_right_direction(
+    ports: list[Port],
+) -> dict[int, Port]:
+    """
+    Создает словарь портов с высшим направлнием:
+    если есть оба направления, выбирается both
+    """
+    port_dict: dict[int, Port] = {}
+
+    for port in ports:
+        if port.index not in port_dict:
+            port_dict[port.index] = port
+        else:
+            # Если уже есть порт с таким индексом, проверяем приоритет
+            existing_port = port_dict[port.index]
+            # Если новый или существующий порт имеет направление both, выбираем его
+            if (
+                port.direction == Direction.Both
+                or existing_port.direction == Direction.Both
+            ):
+                # Оставляем порт с направлением both
+                if port.direction == Direction.Both:
+                    port_dict[port.index] = port
+            # Если оба порта inbound/outbound, можно оставить любой или объединить логику
+            # В данном случае оставляем существующий
+
+    return port_dict

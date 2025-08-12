@@ -224,11 +224,12 @@ devices:
   software_used:
       - Alpha.Server
       - Alpha.Domain
-      - Alpha.Secondary
+      - Alpha.Security
       - Alpha.DevStudio
       - Alpha.HMI
       - Alpha.Historian
       - Alpha.Licensing
+      - Alpha.Net
       - NTP Client
       - KLAgent
       - SSH
@@ -262,10 +263,11 @@ devices:
   software_used:
     - Alpha.Server
     - Alpha.Domain
-    - Alpha.Secondary
+    - Alpha.Security
     - Alpha.DevStudio
     - Alpha.HMI
     - Alpha.Historian
+    - Alpha.Net
     - Alpha.Licensing
     - NTP Client
     - KLAgent
@@ -299,8 +301,9 @@ devices:
     software_id: networking
   software_used:
     - NTP Server
-- name: PPCMNS-SARD-KS2
-  description: Дисплейная панель "Красноселки-2"
+    - SNMP
+- name: PPCMNS-SAR-KS2
+  description: Дисплейная панель САР "Красноселки-2"
   model: IROBO
   role: Panel
   area_type: MNS
@@ -328,11 +331,12 @@ devices:
   software_used:
     - Alpha.Server
     - Alpha.Domain
-    - Alpha.Secondary
+    - Alpha.Security
     - Alpha.DevStudio
     - Alpha.HMI
     - Alpha.Historian
     - Alpha.Licensing
+    - Alpha.Net
     - NTP Client
     - KLAgent
     - SSH
@@ -379,8 +383,8 @@ devices:
     - SNMP
     - SSH
   firewall_id: moxa_firewall
-- name: SWMNS-SARD-KS2-P
-  description: Коммутатор ВУ САРД НПС №1 "Красноселки-2" (Основной)
+- name: SWMNS-SAR-KS2-P
+  description: Коммутатор ВУ САР НПС №1 "Красноселки-2" (Основной)
   model: Moxa
   role: Switch
   area_type: MNS
@@ -400,8 +404,8 @@ devices:
     - SNMP
     - SSH
   firewall_id: moxa_firewall
-- name: SWMNS-SARD-KS2-S
-  description: Коммутатор ВУ САРД НПС №1 "Красноселки-2" (Резервный)
+- name: SWMNS-SAR-KS2-S
+  description: Коммутатор ВУ САР НПС №1 "Красноселки-2" (Резервный)
   model: Moxa
   role: Switch
   area_type: MNS
@@ -422,134 +426,174 @@ devices:
     - SSH
   firewall_id: moxa_firewall
 software:
+- name: Alpha.Net
+  description: Сеть Alpha.Net используется для передачи конфигураций, команд и других данных между компьютерами домена
+  version: 1.4.12
+  ports:
+  - index: 11111
+    description: Адрес первого агента
+    direction: both
+    protocol: TCP
+  - index: 11112
+    description: Адрес второго агента
+    direction: both
+    protocol: TCP
+  - index: 11113
+    description: Адрес третьего агента
+    direction: both
+    protocol: TCP
+  - index: 11114
+    description: Адрес четвертого агента
+    direction: both
+    protocol: TCP
+  - index: 11115
+    description: Адрес пятого агента
+    direction: both
+    protocol: TCP
 - name: Alpha.Server
-  description: Alpha.Server
-  version: v1.0
+  description: "Основной сервер платформы Альфа"
+  version: "6.4.12+b2.r123509"
   ports:
-  - index: 4572
-    description: Для приложений Статистика, Конфигуратор, Управляющий
-    direction: both
-    protocol: TCP
-  - index: 3388
-    description: Предоставление статистики в Alpha.Historian
-    direction: both
-    protocol: TCP
-  - index: 4949
-    description: Сохранение данных в Alpha.Historian
-    direction: both
-    protocol: TCP
-  - index: 4388
-    description: Модуль TCP Server - предоставление данных клиентам
-    direction: both
-    protocol: TCP
-  - index: 161
-    description: Модуль SNMP Manager - опрос агента
-    direction: both
-    protocol: UDP
-  - index: 162
-    description: Модуль SNMP Manager - trap-уведомления
-    direction: both
-    protocol: UDP
-  - index: 6551
-    description: Модуль резервирования - порт основного канала для подключения к резервной паре
-    direction: both
-    protocol: TCP
-  - index: 6552
-    description: Модуль резервирования - порт резервного канала для подключения к резервной паре
-    direction: both
-    protocol: TCP
-  - index: 8080
-    description: Модуль OPC UA Client - порт HTTP/HTTPS протокола
-    direction: both
-    protocol: TCP
-  - index: 10502
-    description: Модуль Modbus TCP Master -опрос подчиненной станцией
-    direction: both
-    protocol: TCP
+    - index: 4572
+      description: "Подключение к Alpha.Server приложений Статистика, Конфигуратор, Управляющий"
+      direction: both
+      protocol: TCP
+    - index: 4388
+      description: "Модуль TCP Server - подключение клиентов / предоставление данных клиентам"
+      direction: both
+      protocol: TCP
+    - index: 6551
+      description: "Модуль резервирования - порт основного канала"
+      direction: both
+      protocol: TCP
+    - index: 6552
+      description: "Модуль резервирования - порт резервного канала"
+      direction: both
+      protocol: TCP
+    - index: 10502
+      description: "Модуль Modbus TCP Slave/Master - подключение опросчика/опрос подчиненной станцией"
+      direction: outbound
+      protocol: TCP
+    - index: 3388
+      description: "Предоставление статистики в Alpha.Historian / Подключение приложения Статистика"
+      direction: both
+      protocol: TCP
+    - index: 4949
+      description: "Сохранение данных в Alpha.Historian / Получение исторических данных"
+      direction: both
+      protocol: TCP
+    - index: 161
+      description: "Модуль SNMP Manager - опрос агента / Контроль целостности"
+      direction: both
+      protocol: UDP
+    - index: 162
+      description: "Модуль SNMP Manager - trap-уведомления"
+      direction: both
+      protocol: UDP
+    # - index: 6514
+    #   description: "Модуль Syslog Server - получение данных по TLS"
+    #   direction: inbound
+    #   protocol: TCP
+    # - index: 514
+    #   description: "Модуль Syslog Server - получение данных по UDP"
+    #   direction: inbound
+    #   protocol: UDP
+    # - index: 8080
+    #   description: "Модуль OPC UA - получение/отправка данных по протоколу HTTP/HTTPS"
+    #   direction: both
+    #   protocol: TCP
+    # - index: 62544
+    #   description: "Модуль OPC UA - получение/отправка данных по протоколу OPC.TCP"
+    #   direction: both
+    #   protocol: TCP
+    # - index: 2404
+    #   description: "Модуль IEC Slave/Master - подключение опросчика/опрос подчиненной станцией"
+    #   direction: both
+    #   protocol: TCP
+    # - index: 102
+    #   description: "Модуль IEC-61850 Client - опрос устройств"
+    #   direction: outbound
+    #   protocol: TCP
+    # - index: 9600
+    #   description: "Модуль FINS Client - опрос устройств"
+    #   direction: outbound
+    #   protocol: UDP
 - name: Alpha.AccessPoint
-  description: Alpha.Server
-  version: v1.0
+  description: "Точка доступа для подключения внешних приложений"
+  version: "1.0.0"
   ports:
-  - index: 4388
-    description: Подключение к Alpha.Server
-    direction: outbound
-    protocol: TCP
-  - index: 4976
-    description: Подключение к Alpha.AccessPoint приложений Статистика, Конфигуратор
-    direction: inbound
-    protocol: TCP
-  - index: 4949
-    description: Получение исторических данных от Alpha.Historian
-    direction: inbound
-    protocol: TCP
-- name: Alpha.Domain
-  description: Alpha.Server
-  version: v1.0
-  ports:
-  - index: 11010
-    description: Alpha.Domain.Agent
-    direction: both
-    protocol: TCP
-  - index: 11020
-    description: Alpha.Net.Agent
-    direction: both
-    protocol: TCP
-- name: Alpha.Security
-  description: Alpha.Server
-  version: v1.0
-  ports:
-  - index: 389
-    description: Конфигуратор, Агент, LDAP-сервер - запросы данных пользователей, их прав, конфигурирование
-    direction: both
-    protocol: TCP
-- name: Alpha.DevStudio
-  description: Alpha.Server
-  version: v1.0
-  ports:
-  - index: 11010
-    description: Alpha.Net.Agent
-    direction: outbound
-    protocol: TCP
-  - index: 161
-    description: SNMP Manager
-    direction: outbound
-    protocol: UDP
-- name: Alpha.HMI
-  description: Alpha.Server
-  version: v1.0
-  ports:
-  - index: 4388
-    description: Оперативные данные Alpha.Server
-    direction: outbound
-    protocol: TCP
-  - index: 4950
-    description: Исторические данные Alpha.Historian
-    direction: outbound
-    protocol: TCP
+    - index: 4976
+      description: "Подключение к Alpha.AccessPoint приложений Статистика, Конфигуратор"
+      direction: both
+      protocol: TCP
+    - index: 4949
+      description: "Получение исторических данных от Alpha.Historian / Сохранение данных"
+      direction: both
+      protocol: TCP
 - name: Alpha.Historian
-  description: Alpha.Server
-  version: v1.0
+  description: "Хранилище исторических данных"
+  version: "4.0.2+b1.r123650"
   ports:
-  - index: 3388
-    description: Подключение приложения Статистика
-    direction: inbound
-    protocol: TCP
-  - index: 4949
-    description: Сохранение данных
-    direction: inbound
-    protocol: TCP
+    - index: 3388
+      description: "Предоставление статистики в Alpha.Historian / Подключение приложения Статистика"
+      direction: both
+      protocol: TCP
+    - index: 4949
+      description: "Сохранение данных / Получение исторических данных"
+      direction: both
+      protocol: TCP
+- name: Alpha.Domain
+  description: "Доменный компонент платформы"
+  version: "1.4.12+b1.r120735.x86_64"
+  ports:
+    - index: 11020
+      description: "Alpha.Net.Agent"
+      direction: both
+      protocol: TCP
+    - index: 11010
+      description: "Alpha.Domain.Agent"
+      direction: both
+      protocol: TCP
+- name: Alpha.Security
+  description: "Компонент безопасности и управления доступом"
+  version: "1.7.23+b18.r123496.x86_64"
+  ports:
+    - index: 389
+      description: "LDAP-сервер - запросы данных пользователей, их прав, конфигурирование"
+      direction: both
+      protocol: TCP
 - name: Alpha.Licensing
-  description: Alpha.Server
-  version: v1.0
+  description: "Сервис лицензирования"
+  version: "1.13.1+b1.r126172.x86_64"
   ports:
-  - index: 15150
-    description: Подключение для запроса лицензий
-    direction: inbound
-    protocol: TCP
-  - index: 15151
-    description: Подключение приложения Статистика
-    direction: inbound
-    protocol: TCP
+    - index: 15150
+      description: "Подключение для запроса лицензий"
+      direction: both
+      protocol: TCP
+    - index: 15151
+      description: "Подключение приложения Статистика"
+      direction: both
+      protocol: TCP
+- name: Alpha.DevStudio
+  description: "Среда разработки"
+  version: "3.28.4+b2.r121962"
+  ports:
+    - index: 11010
+      description: "Alpha.Net.Agent / Alpha.Domain.Agent"
+      direction: both
+      protocol: TCP
+- name: Alpha.HMI
+  description: "Дизайнер интерфейсов HMI"
+  version: "2.0.26+b15.r123251.x86_64"
+  ports:
+    - index: 4388
+      description: "Оперативные данные Alpha.Server / Подключение к Alpha.Server"
+      direction: both
+      protocol: TCP
+    - index: 4950
+      description: "Исторические данные Alpha.Historian"
+      direction: both
+      protocol: TCP
 - name: networking
   description: Raise network interfaces
   version: v1.134
@@ -562,7 +606,7 @@ software:
   ports:
   - index: 10502
     description: Modbus TCP
-    direction: outbound
+    direction: inbound
     protocol: TCP
 - name: NTP Client
   description: Протокол синхронизации времени
@@ -586,11 +630,11 @@ software:
   ports:
   - index: 161
     description: Данные
-    direction: both
+    direction: inbound
     protocol: UDP
   - index: 162
     description: Ловушки
-    direction: both
+    direction: inbound
     protocol: UDP
 - name: KLAgent
   description: Kaspersky Agent

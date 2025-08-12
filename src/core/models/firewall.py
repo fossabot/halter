@@ -8,8 +8,6 @@ class RuleAction(StrEnum):
     ACCEPT = "ACCEPT"
     DROP = "DROP"
     REJECT = "REJECT"
-    FLUSH = "FLUSH"
-    SET_POLICY = "SET_POLICY"
 
 
 class Chain(StrEnum):

@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
 from enum import StrEnum
+from typing import Literal
 
-NETWORK_PROTOCOLS: list[str] = ["TCP", "UDP", "ICMP"]
-NETWORK_DIRECTION: list[str] = ["inbound", "outbound", "io", "both"]
+NETWORK_PROTOCOLS = Literal["TCP", "UDP", "ICMP"]
+NETWORK_DIRECTION = Literal["inbound", "outbound", "io", "both"]
 
 
 class Protocol(StrEnum):
@@ -29,15 +30,6 @@ class Port:
         if not (1 <= self.index <= 65535):
             raise ValueError(
                 f"Port number must be between 1 and 65535, got {self.index}."
-            )
-        if self.direction not in NETWORK_DIRECTION:
-            raise ValueError(
-                f"Invalid direction: {self.direction!r}. Must be 'inbound', 'outbound', or 'io'."
-            )
-
-        if self.protocol not in NETWORK_PROTOCOLS:
-            raise ValueError(
-                f"Invalid protocol: {self.protocol!r}. Must be 'TCP' or 'UDP'."
             )
 
 

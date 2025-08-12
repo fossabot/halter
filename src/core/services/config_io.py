@@ -67,7 +67,7 @@ def load_project(path: str) -> Project:
                 n["vlan"] = VLAN(id=n["vlan"]["id"], name=n["vlan"]["name"])
             nets.append(Network(**n))
     except Exception as e:
-        print(f"[red]Failed to load {n}: [/red] {e}")
+        print(f"[red]Failed to load network {n}: [/red] {e}")
 
     # Устройства
     try:
@@ -80,7 +80,7 @@ def load_project(path: str) -> Project:
             params["interfaces"] = interfaces
             devs.append(Device(**params))
     except Exception as e:
-        print(f"[red]Failed to load {d}: [/red] {e}")
+        print(f"[red]Failed to load device {d}: [/red] {e}")
 
     # ПО
     sws = []
