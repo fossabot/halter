@@ -61,3 +61,13 @@ jobs:
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      # ---------------- Build and Publish ----------------
+      - name: Build distribution
+        run: uv build
+
+      - name: Publish to TestPyPI
+        env:
+          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: |
+          uv publish --index testpypi -t $TEST_PYPI_TOKEN

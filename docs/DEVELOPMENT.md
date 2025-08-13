@@ -2,23 +2,19 @@
 
 ## 🔧 Разработка и установка
 
-### 1. Установка напрямую из PyPI
+### 0. Подготовка среды разработки
+
+Установка uv (<https://docs.astral.sh/uv/getting-started/installation/>)
+
+Копирование репозитория и создание виртуального окружения.
 
 ```bash
-pip install halter[cli]       # CLI
-pip install halter[gui]       # GUI
-pip install halter             # Полная установка
-````
-
-### 2. Установка из TestPyPI
-
-```bash
-pip install --index-url https://test.pypi.org/simple/ halter[cli]
-pip install --index-url https://test.pypi.org/simple/ halter[gui]
-pip install --index-url https://test.pypi.org/simple/ halter
+git clone https://github.com/herokrat/halter.git
+cd halter
+uv venv
+uv sync         # Устанавливает обычные зависимости
+uv add --dev     # Устанавливает все dev-зависимости
 ```
-
-> Используется для проверки pre-release версий.
 
 ---
 
@@ -28,6 +24,18 @@ pip install --index-url https://test.pypi.org/simple/ halter
 pytest --cov
 mypy src
 ruff check src
+mkdocs build
+mkdocs server
+```
+
+либо использовать poe создать синонимы команд
+
+```bash
+poe test
+poe check
+poe format
+poe docs
+poe docs-test
 ```
 
 ---
@@ -35,8 +43,10 @@ ruff check src
 ## 📦 Сборка wheel и sdist
 
 ```bash
-python -m build
+uv build
 # wheel и sdist появятся в dist/
+# локально установить вот так
+uv pip install dist/halter-0.1.2-py3-none-any.whl[cli]
 ```
 
 ---
@@ -56,7 +66,7 @@ setx PYPI_TOKEN <токен>    # Windows
 3. Публикация:
 
 ```bash
-twine upload --repository testpypi dist/*
+uv publish --index testpypi -t САМ_ТОКЕН
 ```
 
 ### PyPI (после тестирования)
@@ -81,38 +91,4 @@ uv version --bump major
 uv version --bump alpha
 uv version --bump beta
 uv version --bump rc
-```
-
----
-
-## 🧹 Линтинг и форматирование
-
-```bash
-ruff check src
-black src
-isort src
-```
-
----
-
-## ⚠️ Советы
-
-* Для проверки локально:
-
-```bash
-python -c "import halter; print(halter.__file__)"
-```
-
-* Для `flet` игнорируем mypy предупреждения:
-
-```toml
-[tool.mypy-flet.*]
-ignore_missing_imports = true
-```
-
-* Для предупреждения о hardlink при сборке wheel:
-
-```bash
-export UV_LINK_MODE=copy   # Linux/macOS
-set UV_LINK_MODE=copy      # Windows
 ```
