@@ -2,8 +2,8 @@ import typer
 from rich import print
 from rich.table import Table
 
-from cli.project import project_ref
-from core.models.software import Direction, Port, Protocol, Software
+from halter.cli.project import project_ref
+from halter.core.models.software import Direction, Port, Protocol, Software
 
 app = typer.Typer(help="Manage software entries in the active project")
 

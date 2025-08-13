@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field
 
-from core.validation.validation import validate_netbios_name, validate_role
+from halter.core.validation.validation import (
+    validate_netbios_name,
+    validate_role,
+)
 
 from .interface import NetworkInterface
 
@@ -14,7 +17,7 @@ class Device:
     interfaces: list[NetworkInterface] = field(default_factory=list)
     software_used: list[str] = field(default_factory=list)
     firewall_id: str | None = None
-    area_type: list[str] | None = None
+    area_type: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         validate_netbios_name(self.name)

@@ -2,8 +2,8 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
-from core.models.address import AddressingType
-from core.validation.address_validators import VALIDATION_FUNCTIONS
+from halter.core.models.address import AddressingType
+from halter.core.validation.address_validators import VALIDATION_FUNCTIONS
 
 
 class NetworkTier(StrEnum):

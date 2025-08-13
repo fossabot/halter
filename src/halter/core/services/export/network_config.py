@@ -10,10 +10,10 @@ from typing import Protocol
 
 from rich import print
 
-from core.models.device import Device
-from core.models.interface import NetworkInterface, VlanMode
-from core.models.network import Network
-from core.models.project import Project
+from halter.core.models.device import Device
+from halter.core.models.interface import NetworkInterface, VlanMode
+from halter.core.models.network import Network
+from halter.core.models.project import Project
 
 
 # === Тип для обработчиков ===

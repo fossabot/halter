@@ -3,9 +3,9 @@ from pathlib import Path
 import typer
 from rich import print
 
-from core.constants import DEFAULT_PATH
-from core.models.project import Project
-from core.services.config_io import load_project, save_project
+from halter.core.constants import DEFAULT_PATH
+from halter.core.models.project import Project
+from halter.core.services.config_io import load_project, save_project
 
 app = typer.Typer(help="Create, load and save projects")
 

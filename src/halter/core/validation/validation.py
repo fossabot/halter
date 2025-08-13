@@ -2,7 +2,7 @@
 
 import re
 
-from core.constants import DEVICE_ROLES
+from halter.core.constants import DEVICE_ROLES
 
 
 def validate_netbios_name(name: str) -> None:

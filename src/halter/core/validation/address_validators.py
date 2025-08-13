@@ -6,7 +6,7 @@ import re
 from collections.abc import Callable
 from typing import Any
 
-from core.models.address import AddressingType
+from halter.core.models.address import AddressingType
 
 # Регулярные шаблоны для всех типов
 _validation_patterns: dict[AddressingType, tuple[str, str]] = {

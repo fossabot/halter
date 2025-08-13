@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.core.constants import (
+from halter.core.constants import (
     COLORS,
     DEVICE_BRANDS,
     NETWORK_ADDRESS_CLASS,
@@ -21,7 +21,7 @@ ALL_CONSTANT_LISTS = [
 
 
 @pytest.mark.parametrize("const_list", ALL_CONSTANT_LISTS)
-def test_no_duplicates_and_no_empty(const_list) -> None:
+def test_no_duplicates_and_no_empty(const_list: list[str]) -> None:
     assert len(const_list) == len(set(const_list)), (
         f"Duplicates in {const_list}"
     )

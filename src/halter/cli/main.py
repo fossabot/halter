@@ -3,11 +3,13 @@ from pathlib import Path
 import typer
 from rich import print
 
-from core.constants import DEFAULT_EXPORT_PATH
-from core.models.project import Project
-from core.services.export.firewall import export_firewall_configs
-from core.services.export.netmap import export_to_xlsx
-from core.services.export.network_config import export_networking_configs
+from halter.core.constants import DEFAULT_EXPORT_PATH
+from halter.core.models.project import Project
+from halter.core.services.export.firewall import export_firewall_configs
+from halter.core.services.export.netmap import export_to_xlsx
+from halter.core.services.export.network_config import (
+    export_networking_configs,
+)
 
 from .device import app as device_app
 from .network import app as network_app
@@ -41,7 +43,7 @@ def run() -> None:
 
 @app.command("export-netmap")
 def export_netmap(path: str = "network_ips.xlsx") -> None:
-    """Show project summary"""
+    """Export netmap in xlsx format"""
     p = project_ref.get("active")
     if not p:
         print("[red]No active project.[/red]")
@@ -51,7 +53,7 @@ def export_netmap(path: str = "network_ips.xlsx") -> None:
 
 @app.command("export-configs")
 def export_configs(path: Path = Path(DEFAULT_EXPORT_PATH)) -> None:
-    """Show project summary"""
+    """Export all device configs"""
     p = project_ref.get("active")
     if not p:
         print("[red]No active project.[/red]")

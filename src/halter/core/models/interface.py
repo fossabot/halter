@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from enum import StrEnum
 
-from core.models.address import AddressingType
-from core.validation.address_validators import VALIDATION_FUNCTIONS
+from halter.core.models.address import AddressingType
+from halter.core.validation.address_validators import VALIDATION_FUNCTIONS
 
 
 class VlanMode(StrEnum):
@@ -14,19 +14,20 @@ class VlanMode(StrEnum):
 @dataclass(slots=True, kw_only=True)
 class NetworkInterface:
     name: str
-    network_id: str  # Will match Network.name
     routes: list[str] = field(default_factory=list)
     address_type: AddressingType
-    address: str
+    address: str = ""
     vlan_mode: VlanMode
     software_id: str
+    network_id: str = ""
 
     def __post_init__(self) -> None:
         self._validate_address()
 
     def _validate_address(self) -> None:
-        if validator := VALIDATION_FUNCTIONS.get(self.address_type):
-            validator(self.address)
+        if self.address is not None:
+            if validator := VALIDATION_FUNCTIONS.get(self.address_type):
+                validator(self.address)
 
     def update_address(
         self,

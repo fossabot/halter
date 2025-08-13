@@ -2,11 +2,16 @@
 
 import pytest
 
-from core.models.address import AddressingType
-from core.models.device import Device
-from core.models.interface import NetworkInterface, VlanMode
-from core.models.network import VLAN, Network, NetworkTier, NetworkTopology
-from core.services.export.network_config import (
+from halter.core.models.address import AddressingType
+from halter.core.models.device import Device
+from halter.core.models.interface import NetworkInterface, VlanMode
+from halter.core.models.network import (
+    VLAN,
+    Network,
+    NetworkTier,
+    NetworkTopology,
+)
+from halter.core.services.export.network_config import (
     EXPORT_HANDLERS,
     export_interface_configs_of_device,
     export_linux_networking,

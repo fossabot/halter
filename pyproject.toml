@@ -1,39 +1,37 @@
 [build-system]
-requires = ["setuptools>=80.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.7.19,<0.8.0"]
+build-backend = "uv_build"
 
 [project]
 name = "halter"
-version = "0.1.2"
+version = "0.2.1"
 description = "Приложение для управления сетевыми проектами"
 readme = "README.md"
 requires-python = ">=3.13"
 classifiers = [
-  "Development Status :: 1 - MVP",
+  "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.13",
   "Operating System :: OS Independent",
 ]
-license = "MIT"
-license-files = ["docs/LICENSE.md"]
-authors = [{ name = "HK", email = "hk@example.com" }]
+license = { file = "docs/LICENSE.md" }
+authors = [{ name = "HK", email = "hermankrivk@gmail.com" }]
 dependencies = ["PyYAML>=6.0.2", "openpyxl>=3.1.5"]
 optional-dependencies = { cli = ["typer>=0.16.0"], gui = ["flet>=0.28.2"] }
-
 
 [project.urls]
 Homepage = "https://github.com/herokrat/halter"
 Issues = "https://github.com/herokrat/halter/issues"
 
 [project.scripts]
-halter-cli = "cli.main:run"
+halter-cli = "halter.cli.main:run"
 
+[project.gui-scripts]
+halter-gui = "halter.gui.main:run"
 
-[tool.setuptools.packages.find]
-where = ["src"]
-exclude = ["gui_old*"]
 
 [tool.uv]
+# Указываем, что исходники лежат в src/
 dev-dependencies = [
   "pytest>=8.3.5",
   "pytest-cov>=6.1.1",
@@ -44,10 +42,17 @@ dev-dependencies = [
   "mkdocs>=1.6.1",
   "types-PyYAML>=6.0.12",
   "types-openpyxl>=3.1.5",
+  "flet>=0.28.3",
 ]
 
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
+
 [tool.pytest.ini_options]
-# Устанавливаем корневой путь для pytest
 pythonpath = ["src"]
 
 [tool.coverage.run]
@@ -74,29 +79,12 @@ extend-exclude = [
 ]
 
 [tool.ruff.format]
-quote-style = "double"            # или 'single'
-indent-style = "space"            # можно 'tab'
+quote-style = "double"
+indent-style = "space"
 skip-magic-trailing-comma = false
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[project.gui-scripts]
-halter-gui = "gui.main:run"
-
-[tool.flet]
-# Название организации в формате обратного домена (используется для bundle ID)
-org = "com.company"
-# Название продукта (отображается в заголовках, иконках и about-окне)
-product = "halter"
-# Название компании (отображается в about-окне)
-company = ""
-# Копирайт
-copyright = "Copyright (C) 2025 by HK"
-
-[tool.flet.app]
-# Путь к исходному коду приложения
-path = "src/gui/"
 
 [tool.mypy]
 python_version = "3.13"
@@ -104,14 +92,9 @@ strict = true
 mypy_path = "src"
 show_error_codes = true
 warn_unused_configs = true
-ignore_missing_imports = false
-# Treat src as the source root (so src/core → core)
+ignore_missing_imports = true
 explicit_package_bases = true
-exclude = [
-  "src/gui_old/.*", # если хочешь исключить старый GUI
-  "src/gui/.*",
-  "^tests/.*$",
-]
+exclude = ["halter/src/gui_old/.*", "halter/src/gui/.*", "^tests/.*$"]
 
 [tool.poe.tasks.test]
 help = "Run the test suite"

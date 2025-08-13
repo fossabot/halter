@@ -2,7 +2,7 @@
 
 import pytest
 
-from core.validation.validation import validate_netbios_name
+from halter.core.validation.validation import validate_netbios_name
 
 
 @pytest.mark.parametrize(

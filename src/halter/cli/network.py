@@ -1,9 +1,14 @@
 import typer
 from rich import print
 
-from cli.project import project_ref
-from core.models.address import AddressingType
-from core.models.network import VLAN, Network, NetworkTier, NetworkTopology
+from halter.cli.project import project_ref
+from halter.core.models.address import AddressingType
+from halter.core.models.network import (
+    VLAN,
+    Network,
+    NetworkTier,
+    NetworkTopology,
+)
 
 app = typer.Typer(help="Manage networks in the active project")
 

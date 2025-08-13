@@ -10,12 +10,17 @@ import yaml
 from yaml import CSafeDumper as Dumper
 from yaml import CSafeLoader as Loader
 
-from core.models.address import AddressingType
-from core.models.device import Device
-from core.models.interface import NetworkInterface
-from core.models.network import VLAN, Network, NetworkTier, NetworkTopology
-from core.models.project import Project
-from core.models.software import Port, Software
+from halter.core.models.address import AddressingType
+from halter.core.models.device import Device
+from halter.core.models.interface import NetworkInterface
+from halter.core.models.network import (
+    VLAN,
+    Network,
+    NetworkTier,
+    NetworkTopology,
+)
+from halter.core.models.project import Project
+from halter.core.models.software import Port, Software
 
 
 # Представитель для StrEnum: выводим просто строку

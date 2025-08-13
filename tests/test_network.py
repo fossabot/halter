@@ -2,8 +2,13 @@
 
 import pytest
 
-from core.models.address import AddressingType
-from core.models.network import VLAN, Network, NetworkTier, NetworkTopology
+from halter.core.models.address import AddressingType
+from halter.core.models.network import (
+    VLAN,
+    Network,
+    NetworkTier,
+    NetworkTopology,
+)
 
 # VLAN tests
 

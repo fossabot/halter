@@ -1,9 +1,9 @@
 import typer
 from rich import print
 
-from cli.project import project_ref
-from core.models.device import Device
-from core.models.interface import NetworkInterface
+from halter.cli.project import project_ref
+from halter.core.models.device import Device
+from halter.core.models.interface import NetworkInterface
 
 app = typer.Typer(help="Manage devices in the active project")
 

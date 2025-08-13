@@ -1,8 +1,10 @@
+from typing import Any
+
 import flet as ft
 
-from core.constants import DEFAULT_PATH
-from core.models.project import Project
-from core.services.config_io import load_project
+from halter.core.constants import DEFAULT_PATH
+from halter.core.models.project import Project
+from halter.core.services.config_io import load_project
 
 
 def main(page: ft.Page) -> None:
@@ -16,17 +18,18 @@ def main(page: ft.Page) -> None:
     try:
         project: Project = load_project(DEFAULT_PATH)
     except Exception:
-        project = Project(name="Новый проект", description="", area_type="MNS")
+        project = Project(
+            name="Новый проект", description="", area_type=["MNS"]
+        )
 
     selected_view = ft.Ref[ft.Container]()
 
-    def render_networks_table():
+    def render_networks_table() -> Any:
         rows = [
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(n.name)),
-                    ft.DataCell(ft.Text(n.ipv4)),
-                    ft.DataCell(ft.Text(n.mask)),
+                    ft.DataCell(ft.Text(n.address)),
                     ft.DataCell(ft.Text(str(n.vlan))),
                 ]
             )
@@ -42,7 +45,7 @@ def main(page: ft.Page) -> None:
             rows=rows,
         )
 
-    def render_devices_table():
+    def render_devices_table() -> Any:
         rows = [
             ft.DataRow(
                 cells=[
@@ -62,15 +65,12 @@ def main(page: ft.Page) -> None:
             rows=rows,
         )
 
-    def render_software_table():
+    def render_software_table() -> Any:
         rows = [
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(s.name)),
                     ft.DataCell(ft.Text(s.version)),
-                    ft.DataCell(
-                        ft.Text("Да" if s.has_network_capability else "Нет")
-                    ),
                 ]
             )
             for s in project.software
@@ -84,7 +84,7 @@ def main(page: ft.Page) -> None:
             rows=rows,
         )
 
-    def on_drawer_change(e: ft.ControlEvent):
+    def on_drawer_change(e: ft.ControlEvent) -> None:
         label = e.control.controls[e.data].label
         if label == "Сети":
             content = render_networks_table()

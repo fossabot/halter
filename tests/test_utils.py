@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.utils import (  # путь подкорректируй под себя
+from halter.core.utils import (  # путь подкорректируй под себя
     emoji_str_cancat,
     get_emoji_by_name,
 )
@@ -30,7 +30,7 @@ from src.core.utils import (  # путь подкорректируй под с�
         ("UNKNOWN", "❔"),  # Проверка case-insensitive
     ],
 )
-def test_get_emoji_by_name(name, expected_emoji):
+def test_get_emoji_by_name(name: str, expected_emoji: str) -> None:
     assert get_emoji_by_name(name) == expected_emoji
 
 
@@ -42,5 +42,5 @@ def test_get_emoji_by_name(name, expected_emoji):
         ("nonexistent", "❔nonexistent"),
     ],
 )
-def test_emoji_str_cancat(name, expected):
+def test_emoji_str_cancat(name: str, expected: str) -> None:
     assert emoji_str_cancat(name) == expected

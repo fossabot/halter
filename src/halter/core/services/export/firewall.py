@@ -7,15 +7,20 @@ from pathlib import Path
 
 from rich import print
 
-from core.models.device import Device
-from core.models.firewall import (
+from halter.core.models.device import Device
+from halter.core.models.firewall import (
     Chain,
     FirewallConfig,
     FirewallRule,
     RuleAction,
 )
-from core.models.project import Project
-from core.models.software import NETWORK_DIRECTION, Direction, Port, Software
+from halter.core.models.project import Project
+from halter.core.models.software import (
+    NETWORK_DIRECTION,
+    Direction,
+    Port,
+    Software,
+)
 
 
 def generate_firewall_config_for_device(
@@ -42,7 +47,11 @@ def generate_firewall_config_for_device(
 
     # Проверяем устройства на совпадение портов
     for other_device in devices:
-        if other_device.name == current_device.name:
+        if other_device.name == current_device.name or not (
+            has_common_elements(
+                current_device.area_type, other_device.area_type
+            )
+        ):
             continue
 
         # Получаем порты другого устройства
@@ -121,10 +130,6 @@ def _generate_software_rules(
             if _are_directions_compatible(
                 current_port.direction, other_port.direction
             ):
-                # if index == 161:
-                #     print(
-                #         f"{index} {current_port.direction} {other_port.direction}"
-                #     )
                 # Определяем реальное направление для текущего устройства
                 actual_direction = _get_actual_direction(
                     current_port.direction, other_port.direction
@@ -455,8 +460,19 @@ def generate_iptables_script(config: FirewallConfig) -> str:
     lines.extend(
         [
             "",
-            "# Сохранить правила (раскомментируйте при необходимости)",
-            "# iptables-save > /etc/iptables/rules.v4",
+            "# Создаем файл iptables в каталоге if-pre-up.d",
+            "# Настройка автоматического восстановления iptables правил при загрузке",
+            "mkdir -p /etc/network/if-pre-up.d",
+            "echo '#!/bin/sh' | sudo tee /etc/network/if-pre-up.d/iptables",
+            "echo 'iptables-restore < /etc/iptables.rules' | tee -a /etc/network/if-pre-up.d/iptables",
+            "echo 'exit 0' | tee -a /etc/network/if-pre-up.d/iptables",
+            "chmod +x /etc/network/if-pre-up.d/iptables",
+            "",
+            "# Сохранить правила",
+            "/sbin/iptables-save > /etc/iptables.rules",
+            "",
+            "# Проверить результат",
+            "# ls -la /etc/network/if-pre-up.d/iptables",
         ]
     )
 
@@ -614,3 +630,11 @@ def create_unique_ports_with_right_direction(
             # В данном случае оставляем существующий
 
     return port_dict
+
+
+def has_common_elements(list1: list[str], list2: list[str]) -> bool:
+    """
+    Проверяет, есть ли общие элементы в двух списках
+    (для чисел, кортежей и других хешируемых типов).
+    """
+    return any(item in list2 for item in list1)

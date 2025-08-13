@@ -13,143 +13,153 @@
 [![Issues](https://img.shields.io/github/issues/herokrat/halter)](https://github.com/herokrat/halter/issues)
 [![PRs](https://img.shields.io/github/issues-pr/herokrat/halter)](https://github.com/herokrat/halter/pulls)
 
-**Halter** — это мультиплатформенное приложение (CLI + GUI) для планирования, моделирования и документирования сетевой инфраструктуры. Построено на модульной архитектуре с разделением на `core`, `cli` и `gui`.
+**Halter** — мультиплатформенное приложение (CLI + GUI) для планирования, моделирования и документирования сетевой инфраструктуры. Построено на модульной архитектуре с `core`, `cli` и `gui`.
 
 ---
 
 ## 🚀 Возможности
 
-- 📦 Мощная библиотека `halter-core` для описания сетей, оборудования и ПО
-- 🔧 Удобный CLI-интерфейс `halter-cli` на основе [Typer](https://typer.tiangolo.com/)
-- 🖼️ Современный GUI `halter-gui` на базе [Flet](https://flet.dev/)
-- 🧪 Покрытие тестами, линтинг, CI/CD.
-- 📁 Хранение конфигураций в YAML с возможностью импорта/экспорта
-- 🛠️ Структура монорепозитория с `hatch` и `uv`
+- 📦 Библиотека `halter-core` для описания сетей, оборудования и ПО
+- 🔧 CLI-интерфейс `halter-cli` на основе [Typer](https://typer.tiangolo.com/)
+- 🖼️ ~~GUI `halter-gui` на базе [Flet](https://flet.dev/)~~ (Пока не реализованно)
+- 🧪 Тесты, линтинг, CI/CD
+- 📁 Хранение конфигураций в YAML с импортом/экспортом
 
 ---
 
 ## 🛠️ Установка
 
-### 1. Установите [uv](https://github.com/astral-sh/uv) и [hatch](https://hatch.pypa.io/)
+### Через PyPI (будет доступно, начиная с версии 1.0)
 
 ```bash
-pip install uv
+pip install halter[cli]       # CLI только
+pip install halter[gui]       # GUI только
+pip install halter            # Полная установка
 ````
 
-### 2. Клонируйте репозиторий и установите зависимости
+### Через TestPyPI (для тестирования и разработки)
 
 ```bash
-git clone https://github.com/herokrat/halter.git
-cd halter
-uv venv
-uv sync
+pip install --index-url https://test.pypi.org/simple/ halter[cli]
+pip install --index-url https://test.pypi.org/simple/ halter[gui]
+pip install --index-url https://test.pypi.org/simple/ halter
 ```
-
-### 3. Сборка
-
-`uv build`
-
-### 4. Установка в cli режиме
-
-```bash
-uv pip install "dist/halter-0.1.1-py3-none-any.whl[cli]"
-```
-
-Установка в cli режиме
 
 ---
 
 ## ⚙️ Использование
 
-### CLI
+Отлично! Вот компактный **Quickstart** блок для README/DEVELOPMENT, чтобы сразу можно было попробовать Halter с CLI и GUI, плюс небольшой YAML-пример проекта.
+
+---
+
+### **Quickstart**
+
+#### 1️⃣ Установка
 
 ```bash
-halter-cli --help
-```
+# Для CLI
+pip install halter[cli]
 
-Пример:
+# Для GUI
+pip install halter[gui]
 
-```bash
-halter-cli add device --name "Router-1" --ip 10.0.0.1
-```
-
-### GUI
-
-```bash
-uv run halter-gui
+# Полная установка
+pip install halter
 ```
 
 ---
 
-## 🧪 Тестирование
+#### 2️⃣ Пример использования CLI
 
 ```bash
-hatch run test
+# Создаем устройство
+halter-cli add device --name "Router-1" --model "Cisco-3925" --role "core"
+
+# Список устройств
+halter-cli list devices
+
+# Добавление сети
+halter-cli add network --name "LAN-1" --vlan 10 --address 192.168.10.0/24
+
+# Привязка устройства к сети
+halter-cli attach device --device "Router-1" --network "LAN-1"
 ```
 
 ---
 
-## 🧼 Линтинг и форматирование
+#### 3️⃣ Пример использования GUI
 
 ```bash
-hatch run lint
-hatch run format
+python -m halter.gui.main
+```
+
+> GUI позволяет визуально создавать устройства, сети, ПО и просматривать связи между ними.
+
+---
+
+#### 4️⃣ Пример YAML проекта
+
+Создадим файл `project.yaml`:
+
+```yaml
+name: OfficeNetwork
+description: Сеть офисного здания
+area_type:
+  - office
+networks:
+  - name: LAN-1
+    vlan: 10
+    address: 192.168.10.0/24
+devices:
+  - name: Router-1
+    model: Cisco-3925
+    role: core
+    interfaces:
+      - name: Gi0/0
+        ip: 192.168.10.1
+software:
+  - name: DHCP
+    version: "2.3"
 ```
 
 ---
 
-## 📦 Сборка
+#### 5️⃣ Загрузка YAML в Halter
 
 ```bash
-make build
+halter-cli import project.yaml
+halter-cli list devices
+halter-cli list networks
 ```
 
----
-
-## 📤 Публикация на PyPI
-
-Убедитесь, что у вас установлен `PYPI_TOKEN` в GitHub Secrets или `.env`:
-
-```bash
-make publish
-```
+> Теперь можно работать с проектом как через CLI, так и через GUI.
 
 ---
 
 ## 🗂️ Структура проекта
 
-```bash
+```text
 halter/
-├── core/        # Библиотека с логикой
-├── cli/         # Консольное приложение
-├── gui/         # Графический интерфейс
+|────src/
+|    |──halter/
+|        ├── core/        # Логика приложения
+|        ├── cli/         # Консольное приложение
+|        ├── gui/         # Графический интерфейс
 ├── tests/       # Тесты
+├── docs/        # Документация
 ├── pyproject.toml
-├── Makefile
+├── README.md
 ```
-
----
-
-## 🧠 Зависимости
-
-- Python ≥ 3.13
-- [Typer](https://typer.tiangolo.com/)
-- [Flet](https://flet.dev/)
-- [uv](https://github.com/astral-sh/uv)
-- [hatch](https://hatch.pypa.io/)
-- [pytest](https://docs.pytest.org/)
-- [ruff](https://docs.astral.sh/ruff/)
 
 ---
 
 ## 📝 Лицензия
 
-[MIT License](./LICENSE)
+[MIT License](docs/LICENSE.md)
 
 ---
 
 ## 👤 Автор
 
-**HK** — [hk@example.com](mailto:hk@example.com)
-
----
+**HK** — [hermankriv@gmail.com](mailto:hermankriv@gmail.com)
