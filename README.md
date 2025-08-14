@@ -1,9 +1,8 @@
 # 🧠 Halter
 
-[![PyPI Version](https://img.shields.io/pypi/v/halter)](https://pypi.org/project/halter/)
 [![TestPyPI Version](https://img.shields.io/testpypi/v/halter)](https://test.pypi.org/project/halter/)
 [![Python Version](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/github/license/herokrat/halter)](./docs/LICENSE.md)
+[![License](https://img.shields.io/github/license/herokrat/halter)](/docs/LICENSE.md)
 [![Tests: pytest](https://img.shields.io/badge/tests-pytest-blue)](https://docs.pytest.org/)
 [![Test Coverage](https://img.shields.io/badge/coverage-pytest--cov-brightgreen)](https://github.com/pytest-dev/pytest-cov)
 [![Task Runner: poe](https://img.shields.io/badge/tasks-poethepoet-yellow)](https://github.com/nat-n/poethepoet)
@@ -14,7 +13,6 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Docs: mkdocs](https://img.shields.io/badge/docs-mkdocs-blue)](https://herokrat.github.io/halter/)
 [![Made with Typer](https://img.shields.io/badge/-Made%20with%20Typer-important?logo=python&logoColor=white)](https://typer.tiangolo.com/)
-[![Flet GUI](https://img.shields.io/badge/Flet-GUI_Support-9cf)](https://flet.dev)
 
 ![Logo](/src/halter/assets/logo.jpg "Halter")
 
