@@ -20,8 +20,8 @@ from .software import app as software_app
 app = typer.Typer(help="Project Network Architecture Planner CLI")
 
 app.add_typer(project_app, name="project")
-app.add_typer(network_app, name="network")
 app.add_typer(software_app, name="software")
+app.add_typer(network_app, name="network")
 app.add_typer(device_app, name="device")
 
 

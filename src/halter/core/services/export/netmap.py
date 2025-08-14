@@ -64,7 +64,7 @@ def export_to_xlsx(project: Project, output_xlsx: str) -> None:
 
     for area_type in project.area_type:
         worksheet: Worksheet = wb.create_sheet(area_type.upper())
-        worksheet.append(area_type.upper())
+        worksheet.append([area_type.upper()])
 
     # Save to XLSX
     wb.save(output_xlsx)

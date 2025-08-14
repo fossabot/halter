@@ -1,6 +1,8 @@
 site_name: Halter
 nav:
   - Home: index.md
+  - Development: DEVELOPMENT.md
+  - Roadmap: ROADMAP.md
   - About: about.md
   - License: LICENSE.md
 theme: readthedocs

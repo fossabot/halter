@@ -103,6 +103,10 @@ cmd = "uv run pytest --cov"
 help = "Run the type checking"
 cmd = "uv run mypy src"
 
+[tool.poe.tasks.format]
+help = "Run the ruff format"
+cmd = "uv run ruff format src"
+
 [tool.poe.tasks.docs]
 help = "Run mkdocs build"
 cmd = "uv run mkdocs build"
