@@ -171,3 +171,4 @@ msixconfig.json
 *.egg-info/
 /src/gui_old/
 temp/
+project.yaml
