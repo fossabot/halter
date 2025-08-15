@@ -69,4 +69,4 @@ jobs:
         if: ${{ success() }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          publish-to: testpypi
+          repository-url: "https://test.pypi.org/legacy/"
