@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     continue-on-error: false
-    environment: testpypi
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/halter/
     permissions:
       # Это разрешение обязательно для Trusted Publishing через OIDC
       id-token: write
@@ -68,5 +70,3 @@ jobs:
       - name: Publish package distributions to TestPyPI
         if: ${{ success() }}
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: "https://test.pypi.org/legacy/"
