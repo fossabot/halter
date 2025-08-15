@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "halter"
-version = "0.2.4"
+version = "0.2.5"
 description = "Приложение для управления сетевыми проектами"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -101,7 +101,7 @@ show_error_codes = true
 warn_unused_configs = true
 ignore_missing_imports = true
 explicit_package_bases = true
-exclude = ["halter/src/gui_old/.*", "halter/src/gui/.*", "^tests/.*$"]
+exclude = ["halter/src/gui_old/.*", "halter/src/gui/.*"]
 
 [tool.poe.tasks.test]
 help = "Run the test suite"
