@@ -3,11 +3,6 @@ name: Tests
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
-permissions:
-  contents: read
 
 jobs:
   unit-test:
@@ -15,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     continue-on-error: false
-
+    environment: testpypi
+    permissions:
+      # Это разрешение обязательно для Trusted Publishing через OIDC
+      id-token: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,23 +50,23 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
           fail_ci_if_error: true
           verbose: true
+          use_oidc: true  # Используем OIDC вместо токена
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+            use_oidc: true
 
-      # ---------------- Build and Publish ----------------
-      - name: Build distribution
+      - name: Build test distribution
+        if: ${{ success() }}
         run: uv build
 
-      - name: Publish to TestPyPI
-        env:
-          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-        run: |
-          uv publish --index testpypi -t $TEST_PYPI_TOKEN
+      - name: Publish package distributions to TestPyPI
+        if: ${{ success() }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          publish-to: testpypi

@@ -104,3 +104,11 @@ uv publish --index testpypi -t <токен>
 export PYPI_TOKEN=<токен>   # Linux/macOS
 setx PYPI_TOKEN <токен>     # Windows
 ```
+
+## Документация
+
+Документация реализована на базе [MkDocs](https://www.mkdocs.org/getting-started/)
+
+И публикуется на платформе [read-the-docs](https://readthedocs.io)
+
+ [Пример](https://halter.readthedocs.io/en/latest/)

@@ -12,9 +12,16 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.13",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
   "Operating System :: OS Independent",
+  "Topic :: System :: Networking",
+  "Topic :: System :: Networking :: Firewalls",
 ]
-license = { file = "docs/LICENSE.md" }
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+keywords = ["network", "planning", "firewall", "automation"]
 authors = [{ name = "HK", email = "hermankrivk@gmail.com" }]
 dependencies = ["PyYAML>=6.0.2", "openpyxl>=3.1.5"]
 optional-dependencies = { cli = ["typer>=0.16.0"], gui = ["flet>=0.28.2"] }
@@ -22,6 +29,7 @@ optional-dependencies = { cli = ["typer>=0.16.0"], gui = ["flet>=0.28.2"] }
 [project.urls]
 Homepage = "https://github.com/herokrat/halter"
 Issues = "https://github.com/herokrat/halter/issues"
+Documentation = "https://halter.readthedocs.io/en/latest/"
 
 [project.scripts]
 halter-cli = "halter.cli.main:run"

@@ -1,8 +1,7 @@
 # 🧠 Halter
 
-[![TestPyPI Version](https://img.shields.io/testpypi/v/halter)](https://test.pypi.org/project/halter/)
 [![Python Version](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/github/license/herokrat/halter)](/docs/LICENSE.md)
+[![License](https://img.shields.io/github/license/herokrat/halter)](LICENSE.md)
 [![Tests: pytest](https://img.shields.io/badge/tests-pytest-blue)](https://docs.pytest.org/)
 [![Test Coverage](https://img.shields.io/badge/coverage-pytest--cov-brightgreen)](https://github.com/pytest-dev/pytest-cov)
 [![Task Runner: poe](https://img.shields.io/badge/tasks-poethepoet-yellow)](https://github.com/nat-n/poethepoet)
@@ -14,7 +13,7 @@
 [![Docs: mkdocs](https://img.shields.io/badge/docs-mkdocs-blue)](https://herokrat.github.io/halter/)
 [![Made with Typer](https://img.shields.io/badge/-Made%20with%20Typer-important?logo=python&logoColor=white)](https://typer.tiangolo.com/)
 
-![Logo](/src/halter/assets/logo.jpg "Halter")
+![Halter](/src/halter/assets/halter.png)
 
 **Halter** — мультиплатформенное приложение (CLI + GUI) для планирования, моделирования и документирования сетевой инфраструктуры. Построено на модульной архитектуре с `core`, `cli` и `gui`.
 
@@ -152,7 +151,7 @@ halter/
 
 ## 📝 Лицензия
 
-[MIT License](docs/LICENSE.md)
+[MIT License](LICENSE.md)
 
 ## Разработка
 
