@@ -1,7 +1,7 @@
 import typer
 from rich import print
 
-from halter.cli.project import project_ref
+from halter.cli.context import project_ref
 from halter.core.models.address import AddressingType
 from halter.core.models.network import (
     VLAN,

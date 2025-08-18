@@ -4,6 +4,7 @@
 """
 
 from dataclasses import fields, is_dataclass
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -11,6 +12,7 @@ from yaml import CSafeDumper as Dumper
 from yaml import CSafeLoader as Loader
 
 from halter.core.models.address import AddressingType
+from halter.core.models.area import Area
 from halter.core.models.device import Device
 from halter.core.models.interface import NetworkInterface
 from halter.core.models.network import (
@@ -47,14 +49,14 @@ def to_dict(obj: Any) -> Any:
     return obj
 
 
-def save_project(project: Project, path: str) -> None:
+def save_project(project: Project, path: Path) -> None:
     """Сериализует Project в YAML без тегов классов"""
     data = to_dict(project)
     with open(path, "w", encoding="utf-8") as f:
         yaml.dump(data, f, Dumper=Dumper, sort_keys=False, allow_unicode=True)
 
 
-def load_project(path: str) -> Project:
+def load_project(path: Path) -> Project:
     """Десериализует Project из YAML с учетом StrEnum"""
     with open(path, encoding="utf-8") as f:
         data = yaml.load(f, Loader=Loader)
@@ -95,6 +97,10 @@ def load_project(path: str) -> Project:
         params["ports"] = ports
         sws.append(Software(**params))
 
+    areas = []
+    for area in data.get("areas", []):
+        areas.append(Area(**area))
+
     return Project(
         name=data["name"],
         description=data["description"],
@@ -102,4 +108,5 @@ def load_project(path: str) -> Project:
         networks=nets,
         devices=devs,
         software=sws,
+        areas=areas,
     )

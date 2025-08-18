@@ -1,5 +1,5 @@
 # core/models/network.py
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 from halter.core.models.address import AddressingType
@@ -44,6 +44,7 @@ class Network:
     address_type: AddressingType
     address: str = ""
     gateway: str = ""
+    area_type: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self._validate_address()
