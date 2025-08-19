@@ -12,6 +12,7 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Docs: mkdocs](https://img.shields.io/badge/docs-mkdocs-blue)](https://herokrat.github.io/halter/)
 [![Made with Typer](https://img.shields.io/badge/-Made%20with%20Typer-important?logo=python&logoColor=white)](https://typer.tiangolo.com/)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fherokrat%2Fhalter.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fherokrat%2Fhalter?ref=badge_shield)
 
 ![Halter](/src/halter/assets/halter.png)
 
@@ -162,3 +163,7 @@ halter/
 ## 👤 Автор
 
 **HK** — [hermankriv@gmail.com](mailto:hermankriv@gmail.com)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fherokrat%2Fhalter.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fherokrat%2Fhalter?ref=badge_large)
